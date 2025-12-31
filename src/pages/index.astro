@@ -1,0 +1,232 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Fetch recent blog posts
+const allPosts = import.meta.glob('./blog/*.md', { eager: true });
+const recentPosts = Object.entries(allPosts)
+  .map(([path, post]: [string, any]) => ({
+    title: post.frontmatter.title,
+    slug: path.split('/').pop()?.replace('.md', ''),
+    date: post.frontmatter.date,
+  }))
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .slice(0, 2);
+---
+
+<Layout title="Joe Cardoso - Software Engineer">
+  <div class="hero">
+    <pre class="ascii-art">
+┌─────────────────┐
+│ > hello_world   │
+│ > _             │
+└─────────────────┘
+   </pre>
+    <h1>joe cardoso</h1>
+    <p class="tagline">full-stack engineer • open source contributor • toronto, canada</p>
+  </div>
+
+  <section class="intro">
+    <p>
+    I engineer software to help bridge the gap between hardware capabilities and human needs. I'm grateful to live in an age where there is so much we can tinker with, for so little upfront cost. Here's hoping to share that excitement with whoever crosses these lines on the World Wide Web.
+    </p>
+  </section>
+
+  <section class="projects">
+    <h2>$ ls projects/</h2>
+    <div class="project-list">
+      <article class="project">
+        <h3><a href="https://github.com/vispyr" target="_blank">vispyr</a></h3>
+        <p>
+          Open-source observability platform combining continuous profiling with telemetry data. 
+          Features automated AWS deployment, custom Grafana dashboards, and CLI tools.
+        </p>
+        <div class="tech-stack">
+          <span>python</span>
+          <span>typescript</span>
+          <span>react</span>
+          <span>aws</span>
+        </div>
+      </article>
+
+      <article class="project">
+        <h3><a href="https://bugzilla.mozilla.org/user_profile?user_id=780254" target="_blank">firefox contributions</a></h3>
+        <p>
+          Active contributor working on accessibility features, ARIA specifications, 
+          and HTML table semantics improvements.
+        </p>
+        <div class="tech-stack">
+          <span>c++</span>
+          <span>javascript</span>
+          <span>accessibility</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="blog-preview">
+    <h2>$ cat recent_posts.txt</h2>
+    <ul class="recent-posts">
+      {recentPosts.map((post) => (
+        <li>
+          <a href={`/blog/${post.slug}`}>{post.title}</a>
+          <time>{post.date}</time>
+        </li>
+      ))}
+    </ul>
+    <a href="/blog" class="view-all">view all posts →</a>
+  </section>
+
+  <section class="contact">
+    <h2>$ echo $CONTACT</h2>
+    <div class="links">
+      <a href="https://github.com/JoeCardoso13" target="_blank">github</a>
+      <a href="https://linkedin.com/in/joe-cardoso-eng" target="_blank">linkedin</a>
+      <a href="mailto:jow13_122@yahoo.com">email</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    margin-bottom: 4rem;
+  }
+
+  .ascii-art {
+    color: var(--accent);
+    font-size: 4rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    background: none;
+    padding: 0;
+  }
+
+  .hero h1 {
+    font-size: 3rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .tagline {
+    color: var(--text-dim);
+    font-size: 1rem;
+  }
+
+  .intro {
+    margin-bottom: 4rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+
+  section {
+    margin-bottom: 4rem;
+  }
+
+  section h2 {
+    color: var(--accent);
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+  }
+
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .project {
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 5px;
+    transition: border-color 0.2s;
+  }
+
+  .project:hover {
+    border-color: var(--accent);
+  }
+
+  .project h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .project h3 a {
+    color: var(--text);
+  }
+
+  .project h3 a:hover {
+    color: var(--accent);
+  }
+
+  .project p {
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+
+  .tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tech-stack span {
+    background: #1a1a1a;
+    color: var(--accent);
+    padding: 0.3rem 0.8rem;
+    border-radius: 3px;
+    font-size: 0.85rem;
+  }
+
+  .recent-posts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .recent-posts li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .recent-posts li:last-child {
+    border-bottom: none;
+  }
+
+  .recent-posts a {
+    color: var(--text);
+  }
+
+  .recent-posts a:hover {
+    color: var(--accent);
+  }
+
+  .recent-posts time {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+
+  .view-all {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .contact .links {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 640px) {
+    .hero h1 {
+      font-size: 2rem;
+    }
+
+    .contact .links {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+</style>

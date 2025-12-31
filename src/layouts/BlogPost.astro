@@ -1,0 +1,122 @@
+---
+import Layout from './Layout.astro';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    date: string;
+    description: string;
+  };
+}
+
+const { frontmatter } = Astro.props;
+---
+
+<Layout title={frontmatter.title} description={frontmatter.description}>
+  <article class="blog-post">
+    <header class="post-header">
+      <time>{frontmatter.date}</time>
+      <h1>{frontmatter.title}</h1>
+      <p class="subtitle">{frontmatter.description}</p>
+    </header>
+
+    <div class="post-content">
+      <slot />
+    </div>
+
+    <footer class="post-footer">
+      <a href="/blog">← Back to all posts</a>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .blog-post {
+    max-width: 100%;
+  }
+
+  .post-header {
+    margin-bottom: 3rem;
+  }
+
+  .post-header time {
+    display: block;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .post-header h1 {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .post-content {
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .post-content :global(h2) {
+    color: var(--accent) !important;
+    font-size: 1.8rem;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content :global(h3) {
+    color: var(--accent) !important;
+    font-size: 1.3rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .post-content p {
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content ul {
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content li {
+    margin-bottom: 0.8rem;
+    line-height: 1.7;
+  }
+
+  .post-content strong {
+    color: var(--accent);
+  }
+
+  .post-content em {
+    color: var(--text-dim);
+  }
+
+  .post-footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .post-footer a {
+    color: var(--accent);
+    font-size: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .post-header h1 {
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+    }
+  }
+</style>
