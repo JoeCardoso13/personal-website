@@ -50,13 +50,14 @@ The site will be available at `http://localhost:4321`
 │   └── favicon.svg
 ├── src/
 │   ├── layouts/
-│   │   └── Layout.astro          # Base layout with styling
+│   │   ├── Layout.astro          # Base layout with styling
+│   │   └── BlogPost.astro        # Blog post layout
 │   ├── pages/
 │   │   ├── index.astro           # Homepage
 │   │   ├── about.astro           # About page
 │   │   ├── blog.astro            # Blog listing
 │   │   └── blog/
-│   │       └── building-vispyr.astro  # Sample blog post
+│   │       └── *.md              # Blog posts (Markdown)
 ├── astro.config.mjs
 ├── package.json
 └── tsconfig.json
@@ -101,27 +102,22 @@ Other great monospace options:
 
 ## Adding Blog Posts
 
-Create a new `.astro` file in `src/pages/blog/`:
+Create a new `.md` file in `src/pages/blog/`:
 
-```astro
+```markdown
 ---
-import Layout from '../../layouts/Layout.astro';
+layout: ../../layouts/BlogPost.astro
+title: "Your Post Title"
+date: "January 1, 2025"
+description: "Brief description for SEO and previews"
 ---
 
-<Layout title="Your Post Title">
-  <article class="blog-post">
-    <header class="post-header">
-      <time>January 1, 2025</time>
-      <h1>Your Post Title</h1>
-    </header>
-    <div class="post-content">
-      <!-- Your content here -->
-    </div>
-  </article>
-</Layout>
+## Your First Heading
+
+Your content here in Markdown...
 ```
 
-Then add it to the posts array in `src/pages/blog.astro`.
+That's it! Posts are automatically discovered and listed—no manual configuration needed.
 
 ## Deployment
 
