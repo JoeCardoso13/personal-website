@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/BlogPost.astro
-title: "Leveraging the cloud to overcome hardware limitations"
+title: "Leveraging The Cloud To Overcome Hardware Limitations"
 date: "November 15, 2025"
 description: "Facing challenges due to low hardware specs, I SSHed into a remote VPS and used those rented computational resources to meet my needs."
 ---
