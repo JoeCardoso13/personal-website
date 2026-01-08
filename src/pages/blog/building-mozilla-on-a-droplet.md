@@ -7,17 +7,21 @@ description: "Facing challenges due to low hardware specs, I SSHed into a remote
 
 ## Intro
 
-By November 2025 [I started working]() on some bugs from the Mozilla Firefox codebase. It's been quite a journey, where I surprised myself with the capacity to promptly tackle real, highly difficult software engineering problems. One facet of these challenges came from my own hardware limitations. It turned into another great chance to learn powerful, transferrable skills.
+By November 2025 [I started working](/blog/contributing-to-firefox) on some bugs from the [Mozilla Firefox codebase](https://bugzilla.mozilla.org/). It's been quite an interesting journey, where I proved the capacity to promptly tackle real, highly difficult software engineering problems. One unexpected facet of the challenges came from my own hardware limitations. Turned out relying on a low-end, budget-friendly, fragile little laptop for this work was threatening to hamper the whole experience. But then I turned it around, into another opportunity to learn powerful, transferrable skills.
 
 ## The Challenge
 
-When editing a large and complex codebase such as Mozilla Firefox, it is quite useful to be able to run some testing. There are usually a test suite already in place for the section of the code you're modifying. By running these you can neatly verify if your changes didn't break anything that was already built, i.e. do some regression testing.
+When editing a large and complex codebase such as Mozilla Firefox, it is quite useful to be able to run some testing on your own. There is usually a test suite already in place for the section of the code you're modifying, and by running these you can neatly verify if your changes didn't break anything that was working before, i.e. do some regression testing.
 
-While beginning a journey as a Mozilla Bughunter, you're relying on your local machine to run any testing you might need since, at first, you likely won't have [commit level 1]() access. Even without access to the remote, automated Mozilla Firefox's CI testing, you can use all the testing already built into the codebase - as long as your hardware can handle it.
+When I began tackling my first bugs, I didn't have [commit level 1]() clearance. This meant I wasn't able to do a [try push]() into Mozilla's CI system. I'd have to use the testing that was already built into the codebase.
 
-(Explain the whole issue with C++ changes and non-artifact builds)
+According to the [official requirements](https://firefox-source-docs.mozilla.org/setup/linux_build.html), 4Gb of RAM was the bare minimum for an artifact built, but 8Gb recommended. It doesn't explicitly give the requirements for a non-artifact built, but I'd extrapolate - based on experience - 8Gb as the bare minimum and 16Gb as recommended.
 
-Mention that you have a low-end, budget-friendly, fragile little laptop with only 4Gb of RAM.
+## Artifact vs Non-artifact Built
+
+Given that Mozilla Firefox's codebase is so vast and hardware intensive, the developers provide a lighter artifact version of it. The difference is that the artifact version comes with all C++ code already pre-compiled, whereas in the non-artifact version the C++ is compiled locally during the build. It is significantly faster to download all C++ already compiled than to download the scripts and then compile them locally. However, anyone touching C++ files will need to work with the non-artifact built. If you're making changes to C++ you'll need to compile it again to see your changes taking effect, and the artifact - with it's pre-compiled C++ - doesn't allow you to do it.
+
+I realized quickly that most of the bugs I was tackling would entail some C++ editing. And given that being able to run some testing to check the changes made is so fundamental to the work of taking down bugs, it became clear that relying solely on my - alredy described above - laptop would be a significant handicap. I'd love to upgrade my hardware but, given my life's personal projected financial trajectory, the timing couldn't be worse. What'd fit much better would be to rent those computing resources, instead of outright buying them out.
 
 ## Digital Ocean's Droplets
 
@@ -81,3 +85,7 @@ Now to run the tests all I needed was to prepend the commands with `xvfb-run`, s
 ## A Rudimentary CI/CD Workflow
 
 The habit of building Firefox, running tests, editing the code, and then building and testing again created a nice little workflow that in many ways feels like an embryionic CI/CD. As per [official instructions](https://firefox-source-docs.mozilla.org/setup/linux_build.html), to build Firefox you run `./mach build`.
+
+## Takeaways
+
+One of the reasons I decided to write this post is because I feel like I hit an interesting paradigm. I have used my personal computer as a sort of meta-machine, operating and using computer resources around the world, and it turned out to be very financially advantageous. 
