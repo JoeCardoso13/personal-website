@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/BlogPost.astro
 title: "Building Vispyr: An Observability Platform Journey"
-date: "January 15, 2025"
+date: "September 01, 2025"
 description: "How I built an open-source observability platform combining continuous profiling with traditional telemetry data."
 ---
 
