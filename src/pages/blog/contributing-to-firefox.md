@@ -7,17 +7,19 @@ description: "My experience navigating the Firefox development workflow getting 
 
 ## The Browser
 
-A browser is probably more complex than most of us assume at first. Its architecture has predominantly 2 components: 
-1. The engine - in the case of Mozilla Firefox: **Gecko**. Which is a program/platform that runs scripts downloaded from all over the web, i.e. it is built to execute untrusted instructions from websites, web applications, etc. 
+I'd argue the browser is one of the most important softwares in existance today. Maybe right after the Operating System. It's the window through which the bulk of the population access the World Wide Web on a daily basis. It has been the birthplace of some of the world's largest companies by market capitalization, like Amazon, Alphabet (Google) and Meta (Facebook).
+
+Nothstanding its imporance and impact in society, the browser is also - perhaps surprisingly - incredibly complex. Mozilla Firefox contains more than 31 million lines of code. It's a mature codebase, built over 25+ years. Its architecture has predominantly 2 components: 
+1. The engine, or platform - in the case of Mozilla Firefox its named **Gecko**. A program made to run scripts downloaded from all over the web, i.e. built to execute untrusted instructions from websites, web applications, etc. 
 2. The set of many utility programs that interact with these websites: things that help you memorize form entries, passwords, store your web history, enable bookmarking, etc. This is often simply called front-end, or just **Firefox**.
 
-Most of the teams and specialists working full-time are organized along those lines (which, of course, are often blurry). My work as a bughunter was circumscribed to item #2, the **Firefox**.
+Most of the teams and specialists working full-time at Mozilla Firefox are organized along those lines (which are often blurry). My work as a bughunter was circumscribed to #2, the **Firefox**.
 
-Side note: interestingly enough, when working on [refactoring a component from the Debugger panel in DevTools](/blog/bug1543628), I could understand concretely that the browser UI is rendered by the same engine that renders the contents of the web pages. Which means that everything you see surrounding the page you scroll - tabs, bookmarks and so forth - is stylized with CSS, programmed with JavaScript etc.
+Side note: when working on [refactoring a component from the Debugger panel in DevTools](/blog/bug1543628), I could understand concretely that the browser UI is rendered by the same engine that renders the contents of the web pages. Which means that everything you see surrounding the page you scroll - tabs, bookmarks and so forth - is stylized with CSS, programmed with JavaScript etc.
 
 ## Why Mozilla Firefox?
 
-I started contributing because I wanted to understand how browsers actually work under the hood. Also because, as a millenial, I have been using it since the beginning and have a deeper relationship with this browser. The following principles of the [Mozilla Manifesto](https://www.mozilla.org/en-US/about/manifesto/), in particular, stand out to me:
+I started contributing to Firefox because I wanted to understand how browsers actually work under the hood. Also, as a millenial, I have been using it since its inception, and have developed sympathies towards it. The following principles of the [Mozilla Manifesto](https://www.mozilla.org/en-US/about/manifesto/), in particular, stand out to me:
 
 ### Principle 2
 
@@ -27,16 +29,15 @@ I started contributing because I wanted to understand how browsers actually work
 
 *The effectiveness of the internet as a public resource depends upon interoperability (protocols, data formats, content), innovation and decentralized participation worldwide.*
 
-(maybe expand on this a little bit)
+These principles sound nice, but any company's marketing page could say similar things. What sets Mozilla apart is that their organizational structure legally binds them to this mission. Whereas Mozilla's immediate adversaries are public corporations answering solely to their shareholders, Mozilla's own structure is a peculiar case of a non-profit owning its for-profit subsidiary. The [Mozilla Foundation](https://www.mozillafoundation.org/en/) (non-profit 501(c)(3)) makes sure all major decisions concerning the future of the corporatoin aligns with its open web mission. [Mozilla Corporation](https://www.mozilla.org/en-US/) (for-profit) governs day-to-day business decisions, generating revenues, paying employees and so forth.
 
 ## Firefox Impact
 
-(Gecko, the last bastion of freedom)
-Only 3 browser engines remain active today: Blink (Google), WebKit (Apple), Gecko (Mozilla). Keeping Gecko alive, among the other 2 is like insurance against the dangers of a worldwide monopolized web experience. I saw how Firefox saved the web from IE in the 2000s. I see my work at Mozilla as a my little payment contribution towards this insurance that keeps the entire web better for everybody.
+Only [3 browser engines](https://en.wikipedia.org/wiki/Browser_engine) remain actively developed today: Blink (Google), WebKit (Apple), Gecko (Mozilla). Keeping Gecko alive among the other 2 is our insurance against the dangers of a monopolized web experience. I remember how [Firefox saved the web](https://www.firefox.com/en-US/more/browser-history/) from IE in the 2000s, and I'm deeply grateful for it. I'm hereby paying this debt of gratitude by hunting some bugs for the team!
 
-(MDN, the most important documentation project in the world)
+Additionally, I have used the [MDN documentation](https://developer.mozilla.org/en-US/) heavily during my journey to master JavaScript. It's the industry-standard documentation for web developers, and I fully endorse its quality. It just so happens to be funded by revenue from Firefox!
 
-## Ingredients For Contribution
+## Essential Tools
 
 (maybe find something from here: https://firefox-source-docs.mozilla.org/setup/contributing_code.html)
 
