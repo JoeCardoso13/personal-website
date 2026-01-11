@@ -15,26 +15,26 @@ When editing a large and complex codebase such as Mozilla Firefox, it is quite u
 
 When I began tackling my first bugs, I didn't have [commit level 1]() clearance. This meant I wasn't able to do a [try push]() and use Mozilla's CI testing system. I'd have to use the testing that was already built into the codebase.
 
-According to the [official requirements](https://firefox-source-docs.mozilla.org/setup/linux_build.html), 4Gb of RAM is the bare minimum for an artifact built, but 8Gb recommended (at the time of this writing). It doesn't explicitly give the requirements for a non-artifact built, but I'd extrapolate - based on experience - 8Gb as the bare minimum and 16Gb recommended.
+According to the [official requirements](https://firefox-source-docs.mozilla.org/setup/linux_build.html), 4Gb of RAM is the bare minimum for an artifact build, but 8Gb recommended (at the time of this writing). It doesn't explicitly give the requirements for a non-artifact build, but I'd extrapolate - based on experience - 8Gb as the bare minimum and 16Gb recommended.
 
-## Artifact vs Non-artifact Built
+## Artifact vs Non-artifact Build
 
-Given that Mozilla Firefox's codebase is so vast and hardware intensive, the developers provide a lighter [artifact version](https://firefox-source-docs.mozilla.org/contributing/build/artifact_builds.html) of it. The difference is that this version comes with all C++ code pre-compiled, whereas in the non-artifact version the C++ is compiled locally, during the build. It is significantly faster to download all C++ already compiled - the artifacts - than to compile them locally during the built. 
+Given that Mozilla Firefox's codebase is so vast and hardware intensive, the developers provide a lighter [artifact version](https://firefox-source-docs.mozilla.org/contributing/build/artifact_builds.html) of it. The difference is that this version comes with all C++ code pre-compiled, whereas in the non-artifact version the C++ is compiled locally, during the build. It is significantly faster to download all C++ already compiled - the artifacts - than to compile them locally during the build. 
 
-However, for those making changes to C++ code there's no way around the non-artifact version. I realized this very concretely, in practice, as I wasn't able to test my C++ code changes with the artifact built. The downloaded artifacts - compiled C++ - obviously didn't account for my changes and the only way to have that would be to compile locally.
+However, for those making changes to C++ code there's no way around the non-artifact version. I realized this very concretely, in practice, as I wasn't able to test my C++ code changes with the artifact build. The downloaded artifacts - compiled C++ - obviously didn't account for my changes and the only way to have that would be to compile locally.
 
 
 ## Digital Ocean's Droplets
 
 Personally, at this time, it'd be much more convenient to **rent** powerful computing resources than to outright **buy** them, i.e. to upgrade my hardware. The pricing from Digital Ocean's Virtual Private Servers (droplets) is geared towards a different use-case, and, therefore, quite affordable if running for several hours, or even for a few days.
 
-There's a miriad of choices for droplet specs, and I chose the cheapest with shared CPU and 16Gb of RAM. Upon creating it, you're immediately given its IP that you can SSH into it. You ought to have provided your public SSH key to DO already, probably when creating your accoung. If you don't have, or want to generate a new one, run `ssh-keygen` in your terminal. You might already have one at `~/.ssh/id_rsa.pub` though. Some people prefer having multiple SSH keys for different services (like GitHub), for increased security.
+There's a myriad of choices for droplet specs, and I chose the cheapest with shared CPU and 16Gb of RAM. Upon creating it, you're immediately given its IP that you can SSH into it. You ought to have provided your public SSH key to DO already, probably when creating your account. If you don't have, or want to generate a new one, run `ssh-keygen` in your terminal. You might already have one at `~/.ssh/id_rsa.pub` though. Some people prefer having multiple SSH keys for different services (like GitHub), for increased security.
 
 ## How To Operate Remotely Via SSH
 
 You first log into the server by running `ssh root@ip_address` where `ip_address` refers to the IP address of the VPS obtained previously. It's good to add a user so you don't need to keep using `root`. To do so, run `adduser name` where `name` is the name of the user you wish to create - you'll be asked to provide a password. This newly created user, let's call it `name`, will need to use `sudo` commands, so you run `usermod -aG sudo name`. And then copy the SSH key from the root user to the name user by running `rsync --archive --chown=name:name ~/.ssh /home/name`. Now, to check things, you should log out of the server and back into it through your `name` user with `ssh name@ip_address`, and run a `sudo` command such as `sudo apt update`.
 
-If anything, just for the sake of keeping the habit of good SSH hygene, you may follow the rest of this paragraph. Configure your firewall by (first!) enabling SSH with `sudo ufw allow OpenSSH` and then turning on the firewall with `sudo ufw enable`. Be careful as you can get locked out of your sever if you don't perform these in this order. Now disable the root account by editing the config file at `/etc/ssh/sshd_config`. In this file, go to `PermitRootLogin` and substitute `yes` with `no`. Finally, restart the SSH service: `sudo service SSH restart`.
+If anything, just for the sake of keeping the habit of good SSH hygiene, you may follow the rest of this paragraph. Configure your firewall by (first!) enabling SSH with `sudo ufw allow OpenSSH` and then turning on the firewall with `sudo ufw enable`. Be careful as you can get locked out of your server if you don't perform these in this order. Now disable the root account by editing the config file at `/etc/ssh/sshd_config`. In this file, go to `PermitRootLogin` and substitute `yes` with `no`. Finally, restart the SSH service: `sudo service SSH restart`.
 
 ## Connection Persistence
 
@@ -81,11 +81,11 @@ Now to run the tests all I needed was to prepend the commands with `xvfb-run`. S
 
 ## A Rudimentary CI/CD
 
-The habit of building Firefox, running tests, editing the code, building and testing again created a nice little workflow that in many ways feels like an embryionic CI/CD. I'd edit code on my **local machine** - using the **artifact built**, and then leverage on git version controlling to sync the VPS. In the VPS I'd use the **non-artifact built**.
+The habit of building Firefox, running tests, editing the code, building and testing again created a nice little workflow that in many ways feels like an embryonic CI/CD. I'd edit code on my **local machine** - using the **artifact build**, and then leverage git version controlling to sync the VPS. In the VPS I'd use the **non-artifact build**.
 
 Running `git diff main..current-branch > changes.diff` locally creates a `changes.diff` file containing the code differences that `git` can see. It's important to rebase the `current-branch` so we don't end up catching other code changes than the ones we made ourselves. You can copy/paste this `changes.diff` file into your remote codebase however you like, then sync it by running `git apply changes.diff`. Make sure the remote and local `main` branches are identical - `git pull` can update either. 
 
-With the remote and local codebases is synced, run `./mach build` on the remote, non-artifact one and run your testings. More often than not, you'll need to repeat this. Easy peasy, just make sure you run `git restore . && git clean -fd` on the VPS to have the codebase back to its original state.
+With the remote and local codebases synced, run `./mach build` on the remote, non-artifact one and run your testings. More often than not, you'll need to repeat this. Easy peasy, just make sure you run `git restore . && git clean -fd` on the VPS to have the codebase back to its original state.
 
 In other words, repeat these steps:
 
@@ -101,4 +101,4 @@ Until you make it, using `git pull` profusely, both in your local and remote cod
 
 ## Takeaways
 
-Beyond the financial aspect, this initiative was as a sort of proof-of-concept. I wanted to check if it'd be possible/feasible to use my personal laptop as a sort of meta-machine, running more powerful computational resources elsewhere, through virtual connections. I love the feeling of controlling a remote server through the terminal and this experience enhanced my abilities to do that ad hoc.
+Beyond the financial aspect, this initiative was a sort of proof-of-concept. I wanted to check if it'd be possible/feasible to use my personal laptop as a sort of meta-machine, running more powerful computational resources elsewhere, through virtual connections. I love the feeling of controlling a remote server through the terminal and this experience enhanced my abilities to do that ad hoc.
