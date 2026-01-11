@@ -225,6 +225,23 @@ const currentYear = new Date().getFullYear();
     background: rgba(255, 255, 255, 0.02);
   }
 
+  /* Shared section styles */
+  section {
+    margin-bottom: 4rem;
+  }
+
+  section h2 {
+    color: var(--accent);
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+  }
+
+  .contact .links {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.1rem;
+  }
+
   @media (max-width: 640px) {
     .container {
       padding: 1.5rem 1rem;
@@ -242,6 +259,11 @@ const currentYear = new Date().getFullYear();
 
     h1 {
       font-size: 2rem;
+    }
+
+    .contact .links {
+      flex-direction: column;
+      gap: 1rem;
     }
   }
 </style>

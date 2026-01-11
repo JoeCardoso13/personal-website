@@ -3,67 +3,42 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="About - Joe Cardoso" description="About Joe Cardoso - Software Engineer specializing in observability and full-stack development">
-  <h1>$ whoami</h1>
   
   <section class="about-content">
+    <h2>$ whoami</h2>
     <p>
-      Hey! I'm Joe, a full-stack software engineer based in Toronto, Canada. I build systems that help developers understand what their code is doing in production.
+      Hello there! I'm Joe C., a full-stack software engineer based in Toronto, Canada.
     </p>
 
-    <h2>Background</h2>
+    <h2>$ cat journey.txt</h2>
     <p>
-    I have a Master of Engineering in Mechanical Engineering from Texas A&M and transitioned into software development after working with MatLab projects in school and finding out the joy of writing software. I have mastered Ruby, JavaScript and Python programming languages, along with all the fundamentals of Web Development. I'm particularly interested in observability, system performance, and contributing to Open Source in a meaningful way.
+    My journey begins at Texas A&M, when pursuing a Master degree in Mechanical Engineering. Using MatLab often made me realize how much I enjoyed that process of writing software. After graduating and experiencing the world a bit, I realized I would be much happier working on something I'm deeply passionate about, instead of keeping within the guardrails of my formal education. I then decided put all my coins where my passion really lies. 
     </p>
 
-    <h2>Current work</h2>
     <p>
-    Right now I'm contributing to Mozilla Firefox, having landed a few patches with more in the pipeline. Claude Code has been paramount in augmenting my Software Engineering capabilities, allowing me to produce high quality software solutions at such an incredible pace. I also built <a href="https://vispyr.com">Vispyr</a>, an open-source observability tool that combines continuous profiling with traditional telemetry data.
+    Fortunately I have found the <a>Launch School</a> community. (mention: partnership, excellence, expand on the community idea, i.e. folks excelling in their field, leveraging on solid fundamentals and the spirit of excellence to achieve great career things)
     </p>
 
-    <!-- <h2>Outside of code</h2> -->
-    <!-- <p> -->
-    <!--   When I'm not at the keyboard, you'll find me reading about AI and machine learning, playing guitar, or exploring how systems work at scale. I'm fascinated by the intersection of developer experience and system reliability. -->
-    <!-- </p> -->
+    <p>
+    I was lucky enough to partner up with some brilliant folks and together we built <a>Vispyr</a>, a project which I'm very proud of. (mention: complicated stuff about Vispyr)
+    </p
+  </section>
 
-    <h2>Get in touch</h2>
-    <div class="contact-links">
-      <a href="https://github.com/JoeCardoso13" target="_blank">GitHub</a>
-      <a href="https://linkedin.com/in/joe-cardoso-eng" target="_blank">LinkedIn</a>
-      <a href="mailto:joe13_122@yahoo.com">Email</a>
+  <section class="contact">
+    <h2>$ echo $CONTACT</h2>
+    <div class="links">
+      <a href="https://github.com/JoeCardoso13" target="_blank">github</a>
+      <a href="https://linkedin.com/in/joe-cardoso-eng" target="_blank">linkedin</a>
+      <a href="mailto:jow13_122@yahoo.com">email</a>
     </div>
   </section>
 </Layout>
 
 <style>
-  h1 {
-    color: var(--accent);
-    margin-bottom: 3rem;
-  }
-
-  .about-content h2 {
-    color: var(--accent);
-    font-size: 1.4rem;
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
-  }
-
   .about-content p {
-    font-size: 1.05rem;
-    line-height: 1.8;
+    font-size: 0.96rem;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
     margin-bottom: 1.5rem;
-  }
-
-  .contact-links {
-    display: flex;
-    gap: 2rem;
-    margin-top: 2rem;
-    font-size: 1.1rem;
-  }
-
-  @media (max-width: 640px) {
-    .contact-links {
-      flex-direction: column;
-      gap: 1rem;
-    }
   }
 </style>
