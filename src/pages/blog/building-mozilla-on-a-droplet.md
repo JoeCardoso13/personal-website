@@ -85,7 +85,7 @@ The habit of building Firefox, running tests, editing the code, building and tes
 
 Running `git diff main..current-branch > changes.diff` locally creates a `changes.diff` file containing the code differences that `git` can see. It's important to rebase the `current-branch` so we don't end up catching other code changes than the ones we made ourselves. You can copy/paste this `changes.diff` file into your remote codebase however you like, then sync it by running `git apply changes.diff`. Make sure the remote and local `main` branches are identical - `git pull` can update either. 
 
-With the remote and local codebases synced, run `./mach build` on the remote, non-artifact one and run your testings. More often than not, you'll need to repeat this. Easy peasy, just make sure you run `git restore . && git clean -fd` on the VPS to have the codebase back to its original state.
+With the remote and local codebases synced, run `./mach build` on the remote, non-artifact one and run your tests. More often than not, you'll need to repeat this. Easy peasy, just make sure you run `git restore . && git clean -fd` on the VPS to have the codebase back to its original state.
 
 In other words, repeat these steps:
 
@@ -97,8 +97,8 @@ In other words, repeat these steps:
 6. Run testing (remotely)
 7. Run `git restore . && git clean -fd` (remotely)
 
-Until you make it, using `git pull` profusely, both in your local and remote codebases.
+Iterate until you make it, using `git pull` profusely, both in your local and remote codebases.
 
 ## Takeaways
 
-Beyond the financial aspect, this initiative was a sort of proof-of-concept. I wanted to check if it'd be possible/feasible to use my personal laptop as a sort of meta-machine, running more powerful computational resources elsewhere, through virtual connections. I love the feeling of controlling a remote server through the terminal and this experience enhanced my abilities to do that ad hoc.
+Beyond the financial aspect, this initiative was a sort of proof-of-concept. I wanted to check if it'd be possible/feasible to use my personal laptop as a sort of meta-machine, running more powerful computational resources elsewhere through virtual connections. I love the feeling of controlling a remote server through the terminal and this experience enhanced my abilities to do that ad hoc.

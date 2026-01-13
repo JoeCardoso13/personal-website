@@ -41,7 +41,7 @@ Most of the teams and specialists working full-time at Mozilla Firefox are organ
 
 ## Essential Tools
 
-The process of finding a bug to tackle, working on it and submitting a patch can be quite involved, sometimes overwhelming. A good reference to start is this [link](https://firefox-source-docs.mozilla.org/setup/contributing_code.html). Here's a quick description of the most important tools I found during this journey:
+The process of finding a bug to tackle, working on it and submitting a patch can be quite involved, sometimes overwhelming. A good starting reference is [here](https://firefox-source-docs.mozilla.org/setup/contributing_code.html). Here's a quick description of the most important tools I found during this journey:
 
 ### Searchfox
 
@@ -61,14 +61,14 @@ This is the code review platform. After you write your patch locally, you submit
 
 ### Documentation
 
-[The official documentation](https://firefox-source-docs.mozilla.org/) for the Firefox codebase covers everything. It can be useful for some slow learning, i.e. to understand about a particular part of the codebase you're working on. It is **not**, however, where you'll get specific answers or quick fixes. It's dense but comprehensive, you might want to bookmark it.
+[The official documentation](https://firefox-source-docs.mozilla.org/) for the Firefox codebase covers everything. It can be useful for deeper learning, i.e. to understand about a particular part of the codebase you're working on. It is **not**, however, where you'll get specific answers or quick fixes. It's dense but comprehensive, you might want to bookmark it.
 
 ## The Process
 
 First you need to get [your local development build of Firefox](https://firefox-source-docs.mozilla.org/setup/index.html) up and running. The idea is that you make your changes locally and then build your own version of Firefox to run manual testing against. This way you can check if your changes do what you expect. Building the entire codebase on your local machine is going to be a long and computationally intensive operation. You'll need to choose between artifact or non-artifact builds. As explained in my post about [overcoming hardware limitations](/blog/building-mozilla-on-a-droplet), the non-artifact is much heavier, but necessary if you're changing C++ code.
 
-Use [Bugzilla to find a bug to work on](https://firefox-source-docs.mozilla.org/setup/contributing_code.html#find-a-bug-we-ve-identified-as-a-good-fit-for-new-contributors). Finding an adequate bug to your skill level is one of the most difficult parts of this journey. When a bug is already assigned to someone, that's a clue **not** to work on it. Some bug pages have lots of previous discussion and helpful input from maintainers.
+Use [Bugzilla to find a bug to work on](https://firefox-source-docs.mozilla.org/setup/contributing_code.html#find-a-bug-we-ve-identified-as-a-good-fit-for-new-contributors). Finding an suitable bug to your skill level is one of the most difficult parts of this journey. When a bug is already assigned to someone, that's a clue **not** to work on it. Some bug pages have lots of previous discussion and helpful input from maintainers.
 
-Keep your code changes within a single commit. The commit message must have this format: `Bug <bug number> - <patch summary>. r?<reviewer’s Bugzilla handle>!` because Phabricator is going to parse it when you submit the patch. The command to submit a patch is `moz-phab`. When running it you might notice that the git commit message has changed. A link to the Phabricator page was added. This is where most of the interactions with the reviewers happen. To further change the content of this commit without touching the description, use `git commit --amend --no-edit`. Also, if running into issues emanating from leftovers from previous code changes, run `./mach clobber`, then `./mach build` for a fresh build.
+Keep your code changes within a single commit. The commit message must have this format: `Bug <bug number> - <patch summary>. r?<reviewer’s Bugzilla handle>!` because Phabricator is going to parse it when you submit the patch. The command to submit a patch is `moz-phab`. When running it you might notice that the git commit message has changed. A link to the Phabricator page was added. This is where most of the interactions with the reviewers happen. To further change the content of this commit without touching the description, use `git commit --amend --no-edit`. Also, if running into issues caused by leftovers from previous code changes, run `./mach clobber`, then `./mach build` for a fresh build.
 
 As you'll probably work on the patch through multiple days, it's important to rebase your in-progress git branch against the newest `main` branch constantly. That's because Firefox is quite a busy codebase, and updates are made constantly to the `main` repo. So if your patch is sitting on an old version of `main`, it can cause merge conflicts. The workflow is `git switch main` => `git pull` => `git switch <branch-name>` => `git rebase main`. Another good habit to keep is linting your code with `./mach lint --outgoing --fix`.
