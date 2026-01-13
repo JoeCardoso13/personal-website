@@ -118,5 +118,32 @@ const { frontmatter } = Astro.props;
     .subtitle {
       font-size: 1.05rem;
     }
+
+    .post-content :global(h2) {
+      font-size: 1.5rem;
+    }
+
+    .post-content :global(h3) {
+      font-size: 1.2rem;
+    }
+
+    .post-content :global(pre) {
+      font-size: 0.85rem;
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+
+    .post-content :global(code) {
+      word-break: break-word;
+    }
+
+    .post-content :global(table) {
+      font-size: 0.85rem;
+    }
+
+    .post-content :global(th),
+    .post-content :global(td) {
+      padding: 0.5rem;
+    }
   }
 </style>
