@@ -63,6 +63,8 @@ sudo apt-get install -y xvfb \
 
 And here's the breakdown of what they mean:
 
+<a id="packages-table"></a>
+
   | Package                                                                         | Purpose                                                                      |
   |---------------------------------------------------------------------------------|------------------------------------------------------------------------------|
   | xvfb                                                                            | X Virtual Frame Buffer — fake display for running GUI apps without a monitor |
