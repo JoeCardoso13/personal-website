@@ -13,7 +13,7 @@ By November 2025 [I started working](/blog/contributing-to-firefox) on some bugs
 
 When editing a large and complex codebase such as Mozilla Firefox, it is quite useful to be able to run some testing on your own. There is usually a test suite already in place for the section of the code you're modifying, and by running these you can neatly verify if your changes didn't break anything that was working before, i.e. regression testing.
 
-When I began tackling my first bugs, I didn't have [commit level 1]() clearance. This meant I wasn't able to do a [try push]() and use Mozilla's CI testing system. I'd have to use the testing that was already built into the codebase.
+When I began tackling my first bugs, I didn't have [commit level 1](https://www.mozilla.org/en-US/about/governance/policies/commit/access-policy/) clearance. This meant I wasn't able to do a [try push](https://firefox-source-docs.mozilla.org/tools/try/index.html) and use Mozilla's CI testing system. I'd have to use the testing that was already built into the codebase.
 
 According to the [official requirements](https://firefox-source-docs.mozilla.org/setup/linux_build.html), 4Gb of RAM is the bare minimum for an artifact build, but 8Gb recommended (at the time of this writing). It doesn't explicitly give the requirements for a non-artifact build, but I'd extrapolate - based on experience - 8Gb as the bare minimum and 16Gb recommended.
 
