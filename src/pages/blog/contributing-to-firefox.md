@@ -18,7 +18,7 @@ I started contributing to Firefox because I wanted to understand how browsers ac
 
 *The effectiveness of the internet as a public resource depends upon interoperability (protocols, data formats, content), innovation and decentralized participation worldwide.*
 
-The cool thing about Mozilla is that their organizational structure legally binds them to this mission. Whereas Mozilla's competitors are public corporations answering solely to their shareholders, Mozilla's structure is a peculiar case of a non-profit owning its for-profit subsidiary. The [Mozilla Foundation](https://www.mozillafoundation.org/en/) (non-profit 501(c)(3)) makes sure all major decisions concerning the future of the corporation align with its open web mission. [Mozilla Corporation](https://www.mozilla.org/en-US/) (for-profit) governs day-to-day business decisions, generating revenues, paying employees and so forth.
+The cool thing about Mozilla is that their organizational structure legally binds them to this mission. Whereas Mozilla's competitors are public corporations answering solely to their shareholders, Mozilla's structure is a peculiar case of a 'non-profit' owning its 'for-profit' subsidiary. The [Mozilla Foundation](https://www.mozillafoundation.org/en/) (non-profit 501(c)(3)) makes sure all major decisions concerning the future of the corporation align with its open web mission. [Mozilla Corporation](https://www.mozilla.org/en-US/) (for-profit) governs day-to-day business decisions, generating revenues, paying employees and so forth.
 
 ## Firefox Impact
 
@@ -30,18 +30,18 @@ Additionally, during my journey to master JavaScript I relied heavily on the [MD
 
 Most people experience the internet through a browser. This is an extremely important piece of software. It has been the birthplace of some of the world's largest companies by market capitalization: Amazon, Alphabet (Google) and Meta (Facebook).
 
-Beyond its importance and impact in society, the browser is also - perhaps surprisingly - incredibly complex. Mozilla Firefox contains more than 31 million lines of code. It's a mature codebase, built over 25+ years. Its architecture comprises of, predominantly, 2 components: 
+Beyond its importance and impact in society, the browser is also - perhaps surprisingly - incredibly complex. Mozilla Firefox contains more than 31 million lines of code. It's a mature codebase, built over 25+ years. Its architecture comprises of, predominantly, 2 parts: 
 1. The engine, or platform - in the case of Mozilla Firefox, named **Gecko**, is a program made to run scripts downloaded from all over the web. It's built to execute untrusted instructions from websites, web applications, etc. 
 2. The frontend, which is the set of many utility programs that interact with these websites: things that help you memorize form entries, passwords, store your web history, enable bookmarking, etc. This is often simply called **Firefox**.
 
-Most of the teams and specialists working full-time at Mozilla Firefox are organized along those (sometimes blurry) lines. My work as a bughunter was circumscribed to #2, the **Firefox**.
+Most of the teams and specialists working full-time at Mozilla Firefox are organized along those (sometimes blurry) lines. My work as a bug-hunter was circumscribed to #2, the **Firefox**.
 
 *Side note: the browser UI is rendered by the same engine that renders the contents of the web pages. This means that everything you see surrounding a page you scroll - tabs, bookmarks and so forth - is stylized with CSS, programmed with JavaScript, etc. I could see this, in practice, when working on [refactoring a component from the Debugger panel in DevTools](/blog/bug1543628).*
 
 
 ## Essential Tools
 
-The process of finding a bug to tackle, working on it and submitting a patch can be quite involved, sometimes overwhelming. A good starting reference is [here](https://firefox-source-docs.mozilla.org/setup/contributing_code.html). Here's a quick description of the most important tools I found during this journey:
+The process of finding a bug to tackle, working on it and submitting a patch can be quite involved, sometimes overwhelming. A good starting reference can be found [here](https://firefox-source-docs.mozilla.org/setup/contributing_code.html). Following is a quick description of the most important tools that you'll use in this journey:
 
 ### Searchfox
 
@@ -69,6 +69,6 @@ First you need to get [your local development build of Firefox](https://firefox-
 
 Use [Bugzilla to find a bug to work on](https://firefox-source-docs.mozilla.org/setup/contributing_code.html#find-a-bug-we-ve-identified-as-a-good-fit-for-new-contributors). Finding an suitable bug to your skill level is one of the most difficult parts of this journey. When a bug is already assigned to someone, that's a clue **not** to work on it. Some bug pages have lots of previous discussion and helpful input from maintainers.
 
-Keep your code changes within a single commit. The commit message must have this format: `Bug <bug number> - <patch summary>. r?<reviewer’s Bugzilla handle>!` because Phabricator is going to parse it when you submit the patch. The command to submit a patch is `moz-phab`. When running it you might notice that the git commit message has changed. A link to the Phabricator page was added. This is where most of the interactions with the reviewers happen. To further change the content of this commit without touching the description, use `git commit --amend --no-edit`. Also, if running into issues caused by leftovers from previous code changes, run `./mach clobber`, then `./mach build` for a fresh build.
+Keep your code changes within a single commit. The commit message must have this format: `Bug <bug number> - <patch summary>. r?<reviewer’s Bugzilla handle>!` because Phabricator is going to parse it when you submit the patch. The command to submit a patch is `moz-phab`. When running it you might notice that the git commit message has changed. A link to the Phabricator page was added. This is where most of the interactions with the reviewers happen. To further change the content of this commit without touching the description, use `git commit --amend --no-edit`, this will likely happen often. Also, if running into issues caused by leftovers from previous code changes, run `./mach clobber`, then `./mach build` for a fresh build.
 
 As you'll probably work on the patch through multiple days, it's important to rebase your in-progress git branch against the newest `main` branch constantly. That's because Firefox is quite a busy codebase, and updates are made constantly to the `main` repo. So if your patch is sitting on an old version of `main`, it can cause merge conflicts. The workflow is `git switch main` => `git pull` => `git switch <branch-name>` => `git rebase main`. Another good habit to keep is linting your code with `./mach lint --outgoing --fix`.
