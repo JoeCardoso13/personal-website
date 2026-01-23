@@ -137,3 +137,52 @@ We'd add a `statusLine` property to that JSON file. It looks something like:
 **Claude:** You don't need to use the `/statusline` command at all. Just tell me what you want and I can help you directly.
 
 The `/statusline` command is a shortcut that spawns a specialized agent with a default prompt (to read your PS1 config). But since we're already talking about it, just describe what you want here and I'll:
+
+### /sync-medium
+
+I write my blog posts locally in markdown, but I also cross-post them to Medium. Sometimes I make edits on Medium (typos, better phrasing) and want to sync those changes back to my codebase. This was a manual copy-paste workflow, so I asked Claude to turn it into a skill.
+
+**Me:** See this workflow where I copy-paste a Medium article and you compare it with the codebase version? I want to turn that into a skill.
+
+**Claude:** Created `~/.claude/skills/sync-medium/SKILL.md` with instructions for receiving pasted content, finding the matching blog post, and applying updates.
+
+**Me:** What if we could fetch the Medium article from a URL instead of copy-pasting?
+
+**Claude:** Let me try WebFetch...
+```
+WebFetch: https://medium.com/@joecardoso1312/my-article
+Error: 403 Forbidden
+```
+
+**Claude:** Medium blocks direct fetches. Let me try scribe.rip, a Medium mirror...
+```
+WebFetch: https://scribe.rip/@joecardoso1312/my-article
+Result: [summarized content]
+```
+
+**Me:** It worked but WebFetch summarizes the content. Can't you just fetch the raw HTML?
+
+**Claude:** You're right - I can use curl instead.
+```bash
+curl -s "https://scribe.rip/@joecardoso1312/my-article"
+```
+Returns full HTML with all the article content intact.
+
+**Me:** What about curling the original Medium URL?
+
+**Claude:**
+```bash
+curl -s "https://medium.com/@joecardoso1312/my-article"
+```
+Returns Cloudflare challenge page: "Enable JavaScript and cookies to continue." Medium blocks automated requests, which is why scribe.rip is the workaround.
+
+**The final skill workflow:**
+1. User provides Medium URL
+2. Claude converts `medium.com` → `scribe.rip`
+3. Fetches raw HTML with curl
+4. Parses content and compares with blog post
+5. Applies updates while preserving frontmatter and relative links
+
+**Me:** Eventually if we realize anything can be improved we can always tweak that SKILL.md, right?
+
+**Claude:** Exactly. It's just a markdown file.
