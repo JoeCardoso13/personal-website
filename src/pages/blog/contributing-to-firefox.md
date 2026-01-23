@@ -22,7 +22,7 @@ The cool thing about Mozilla is that their organizational structure legally bind
 
 ## Firefox Impact
 
-Only [3 browser engines](https://en.wikipedia.org/wiki/Browser_engine) remain actively developed today: Blink (Google), WebKit (Apple), and Gecko (Mozilla). Keeping Gecko alive is our insurance against the dangers of a monopolized web experience. I remember how [Firefox saved the web](https://www.firefox.com/en-US/more/browser-history/) from IE back in the 2000s, and I'm deeply grateful for it. So I'm hereby paying this debt of gratitude by hunting some bugs for the team!
+Only [3 browser engines](https://en.wikipedia.org/wiki/Browser_engine) remain actively developed today: [Blink](https://www.chromium.org/blink/) (Google), [WebKit](https://webkit.org/) (Apple), and [Gecko](https://firefox-source-docs.mozilla.org/overview/gecko.html) (Mozilla). Keeping Gecko alive is our insurance against the dangers of a monopolized web experience. I remember how [Firefox saved the web](https://www.firefox.com/en-US/more/browser-history/) from IE back in the 2000s, and I'm deeply grateful for it. So I'm hereby paying this debt of gratitude by hunting some bugs for the team!
 
 Additionally, during my journey to master JavaScript I relied heavily on the [MDN documentation](https://developer.mozilla.org/en-US/). I fully endorse its quality, it's the industry-standard documentation for web developers. This gem is funded by revenue from Firefox! Time to give back to the community.
 
@@ -30,9 +30,10 @@ Additionally, during my journey to master JavaScript I relied heavily on the [MD
 
 Most people experience the internet through a browser. This is an extremely important piece of software. It has been the birthplace of some of the world's largest companies by market capitalization: Amazon, Alphabet (Google) and Meta (Facebook).
 
-Beyond its importance and impact in society, the browser is also - perhaps surprisingly - incredibly complex. Mozilla Firefox contains more than 31 million lines of code. It's a mature codebase, built over 25+ years. Its architecture comprises of, predominantly, 2 parts: 
-1. The engine, or platform - in the case of Mozilla Firefox, named **Gecko**, is a program made to run scripts downloaded from all over the web. It's built to execute untrusted instructions from websites, web applications, etc. 
-2. The frontend, which is the set of many utility programs that interact with these websites: things that help you memorize form entries, passwords, store your web history, enable bookmarking, etc. This is often simply called **Firefox**.
+Beyond its importance and impact in society, the browser is also incredibly complex. Mozilla Firefox contains more than 31 million lines of code. It's a mature codebase, built over 25+ years. Its architecture comprises of, predominantly, 2 parts:
+
+1. The engine, or platform — in the case of Mozilla Firefox, named **Gecko**, is a program made to run scripts downloaded from all over the web. It's built to execute untrusted instructions from websites, web applications, etc.
+2. The frontend, which is the set of many utility programs that interact with these websites: things that help populating form fields for you, create strong passwords and securely store them on your behalf, store your web history, enable bookmarking, etc. This is often simply called **Firefox**.
 
 Most of the teams and specialists working full-time at Mozilla Firefox are organized along those (sometimes blurry) lines. My work as a bug-hunter was circumscribed to #2, the **Firefox**.
 
@@ -45,11 +46,11 @@ The process of finding a bug to tackle, working on it and submitting a patch can
 
 ### Searchfox
 
-[Searchfox](https://searchfox.org/) is the source code search and navigation tool. It indexes C++, Rust, and JavaScript across the entire Firefox codebase. You can search by text, file path, or regex. It is a great place to start working on your bug. It helps you circumscribe affected files in an organized way, so you can tackle them systematically. For an in-depth description of this tool, watch the [FOSDEM 22 presentation by Emilio Cobos](https://archive.fosdem.org/2022/schedule/event/mozilla_searchfox/).
+[Searchfox](https://searchfox.org/) is the source code search and navigation tool. It indexes HTML, CSS, C++, Rust, JavaScript, Python, etc., across the entire Firefox codebase. You can search by text, file path, or regex. It is a great place to start working on your bug. It helps you determine affected files in an organized way, so you can tackle them systematically. For an in-depth description of this tool, watch the [FOSDEM 22 presentation by Emilio Cobos](https://archive.fosdem.org/2022/schedule/event/mozilla_searchfox/).
 
 ### Matrix
 
-This is Mozilla's real-time chat platform, like a modern IRC. It's where you ask questions, get unstuck, and interact with maintainers. For general contribution questions, `#introduction:mozilla.org` is welcoming to newcomers. When documentation fails you, Matrix is where humans help.
+This is Mozilla's real-time chat platform, like a modern IRC. It's where you ask questions, get unstuck, and interact with maintainers. For general contribution questions, [`#introduction:mozilla.org`](https://chat.mozilla.org/#/room/#introduction:mozilla.org) is welcoming to newcomers. When documentation fails you, Matrix is where humans help.
 
 ### Bugzilla
 
@@ -71,4 +72,6 @@ Use [Bugzilla to find a bug to work on](https://firefox-source-docs.mozilla.org/
 
 Keep your code changes within a single commit. The commit message must have this format: `Bug <bug number> - <patch summary>. r?<reviewer’s Bugzilla handle>!` because Phabricator is going to parse it when you submit the patch. The command to submit a patch is `moz-phab`. When running it you might notice that the git commit message has changed. A link to the Phabricator page was added. This is where most of the interactions with the reviewers happen. To further change the content of this commit without touching the description, use `git commit --amend --no-edit`, this will likely happen often. Also, if running into issues caused by leftovers from previous code changes, run `./mach clobber`, then `./mach build` for a fresh build.
 
-As you'll probably work on the patch through multiple days, it's important to rebase your in-progress git branch against the newest `main` branch constantly. That's because Firefox is quite a busy codebase, and updates are made constantly to the `main` repo. So if your patch is sitting on an old version of `main`, it can cause merge conflicts. The workflow is `git switch main` => `git pull` => `git switch <branch-name>` => `git rebase main`. Another good habit to keep is linting your code with `./mach lint --outgoing --fix`.
+As you'll probably work on the patch across multiple days, it's important to rebase your in-progress git branch against the newest `main` branch constantly. That's because Firefox is quite a busy codebase, and updates are made constantly to the `main` repo. So if your patch is sitting on an old version of `main`, it can cause merge conflicts. The workflow is `git switch main` => `git pull` => `git switch <branch-name>` => `git rebase main`. Another good habit to keep is linting your code with `./mach lint --outgoing --fix`.
+
+I know it's a lot to take in all at once, but these are really just the most basic things you'll need to know when landing patches. In time, you'll gain familiarity and focus less on the process and more on the bugs themselves. Happy bug-hunting!

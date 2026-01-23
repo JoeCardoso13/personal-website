@@ -7,7 +7,7 @@ description: "Facing challenges due to low hardware specs, I SSHed into a remote
 
 ## Intro
 
-By November 2025 [I started working](/blog/contributing-to-firefox) on bugs from the [Mozilla Firefox codebase](https://bugzilla.mozilla.org/). It's been quite an interesting journey, where I was able to promptly tackle real, highly difficult software engineering problems. One of the challenges came from my own hardware limitations. Turned out that relying on a low-end, budget-friendly, fragile little laptop for this work was threatening to hamper the whole experience. But then I turned it into an opportunity to learn new skills.
+In November 2025 [I started working](/blog/contributing-to-firefox) on bugs from the [Mozilla Firefox codebase](https://bugzilla.mozilla.org/). It's been quite an interesting journey, where I was able to promptly tackle real, highly difficult software engineering problems. One of the challenges came from my own hardware limitations. Turned out that relying on a low-end, budget-friendly, fragile little laptop for this work was threatening to hamper the whole experience. But then I turned it into an opportunity to learn new skills.
 
 ## The Challenge
 
@@ -32,9 +32,9 @@ There's a myriad of choices for droplet specs, and I chose the cheapest with sha
 
 ## How To Operate Remotely Via SSH
 
-You first log into the server by running `ssh root@ip_address` where `ip_address` refers to the IP address of the VPS obtained previously. It's good to add a user so you don't need to keep using `root`. To do so, run `adduser name` where `name` is the name of the user you wish to create - you'll be asked to provide a password. This newly created user, let's call it `name`, will need to use `sudo` commands, so you run `usermod -aG sudo name`. And then copy the SSH key from the root user to the name user by running `rsync --archive --chown=name:name ~/.ssh /home/name`. Now, to check things, you should log out of the server and back into it through your `name` user with `ssh name@ip_address`, and run a `sudo` command such as `sudo apt update`.
+You first log into the server by running `ssh root@ip_address` where `ip_address` refers to the IP address of the VPS obtained previously. It's good to add a user so you don't need to keep using `root`. To do so, run `adduser name` where `name` is the name of the user you wish to create - you'll be asked to provide a password. This newly created user, let's call it `joe`, will need to use `sudo` commands, so you run `usermod -aG sudo joe`. And then copy the SSH key from the root user to the `joe` user by running `rsync --archive --chown=name:joe ~/.ssh /home/joe`. Now, to check things, you should log out of the server and back into it through your `name` user with `ssh name@ip_address`, and run a `sudo` command such as `sudo apt update`.
 
-If anything, just for the sake of keeping the habit of good SSH hygiene, you may follow the rest of this paragraph. Configure your firewall by (first!) enabling SSH with `sudo ufw allow OpenSSH` and then turning on the firewall with `sudo ufw enable`. Be careful as you can get locked out of your server if you don't perform these in this order. Now disable the root account by editing the config file at `/etc/ssh/sshd_config`. In this file, go to `PermitRootLogin` and substitute `yes` with `no`. Finally, restart the SSH service: `sudo service SSH restart`.
+And for keeping up the good SSH hygiene, configure your firewall by (first!) enabling SSH with `sudo ufw allow OpenSSH` and then turning on the firewall with `sudo ufw enable`. Be careful as you can get locked out of your server if you don't perform these in this order. Now disable the root account by editing the config file at `/etc/ssh/sshd_config`. In this file, go to `PermitRootLogin` and substitute `yes` with `no`. Finally, restart the SSH service: `sudo service SSH restart`.
 
 ## Connection Persistence
 
@@ -51,7 +51,7 @@ tmux copy-mode                # or Ctrl+b, [ to enter scroll mode (q or Escape t
 ```
 ## Headless Testing
 
-The most gnarly part of testing in an environment like a VPS is that Firefox will need a lot of runtime dependencies that probably won't come pre-installed by default. For brevity, I'll just share the command I used for the salad-package installment that enabled me to run headless tests on the VPS:
+The most gnarly part of testing in an environment like a VPS is that Firefox will need a lot of runtime dependencies that probably won't come pre-installed by default. For brevity, I'll just share the command I used for the kitchen-sink package installation that enabled me to run headless tests on the VPS:
 ```bash
 sudo apt-get install -y xvfb \
   libgtk-3-0 libdbus-glib-1-2 libxt6 libpci3 \
@@ -83,7 +83,7 @@ Now to run the tests all I needed was to prepend the commands with `xvfb-run`. S
 
 ## A Rudimentary CI/CD
 
-The habit of building Firefox, running tests, editing the code, building and testing again created a nice little workflow that feels like an embryonic CI/CD. I'd edit code on my **local machine** - using the **artifact build**, and then leverage git version controlling to sync the VPS. In the VPS I'd be using the **non-artifact build**.
+The habit of building Firefox, editing the code, running tests, then repeating the process over and over again, created a nice little workflow that feels like an embryonic CI/CD. I'd edit code on my **local machine** - using the **artifact build**, and then leverage git version controlling to sync the VPS. In the VPS I'd be using the **non-artifact build**.
 
 Running `git diff main..current-branch > changes.diff` locally creates a `changes.diff` file containing the code differences that `git` can see. It's important to rebase the `current-branch` so we don't end up catching other code changes than the ones we made ourselves. You can copy/paste this `changes.diff` file into your remote codebase however you like, then sync it by running `git apply changes.diff`. Make sure the remote and local `main` branches are identical - `git pull` can update both. 
 
