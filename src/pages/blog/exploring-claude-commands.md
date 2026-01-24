@@ -1,23 +1,21 @@
 ---
 layout: ../../layouts/BlogPost.astro
-title: "Claude Code Tidbits"
-date: "TBD"
-description: "In the first episode of the series, we explore the fundamentals of Claude Code's slash commmands."
+title: "Claude Code Tidbits: extending Claude with skills"
+date: "January 26, 2026"
+description: "Exploring the fundamentals of Claude Code's skill commmands."
 ---
 
 ## Intro
 
-Assisted coding: important, improves productivity, one-way future road.
+As using Claude Code for assisted coding increases in popularity, the restless developer community does what it can't help but do: automate workflows, build things around, create tools to make smooth transitions, etc. One thing that's becoming more established at the time of this writing is the so-called agentic skill. It consists of a tiny package of knowledge to serve as preparation for the LLM to conduct a certain task. It's essentially a way to save time and effort so that you don't have to keep repeating yourself, and memorizing every detail, everytime you need Claude to do a certain task.
 
-Current scenario = learn by doing, not much documentation available, all very fresh 
+Here we'll first delve into what Claude's skills are, explaining its more general aspects, and then we'll create 1 simple skills that'll serve as example to help consolidate the concept.
 
-## Skill vs Hardcoded
+## Skill
 
-- **No arguments**: `/help`, `/clear`, `/cost`, `/compact` - just execute
-- **Simple arguments**: `/model sonnet` - takes a model name
-- **Prompt-style**: `/statusline <your description>` - passes text to a specialized agent
+(Use the fact that this is an open source pattern created by Anthropic - https://agentskills.io/home - and explain the concept of Agents and how it connects to skills)
 
-**There's no strict "arity" definition.** The pattern is simple:
+The pattern is simple:
 
 ```
 /command-name [everything after is $ARGUMENTS]
@@ -41,17 +39,6 @@ Fix GitHub issue 123 following our standards.
 ```
 
 **The `argument-hint` field** in skill frontmatter is just for autocomplete hints - it documents what arguments are expected but doesn't enforce anything.
-
-**Built-in commands** like `/help`, `/clear`, `/model` are different - they're hardcoded, not skill-based.
-
-So it's less like typed function calls and more like "command + free-form text that gets templated in." Pretty flexible but also pretty loose.
-
----
-**Hardcoded commands:**
-- Built into Claude Code's binary (the application itself)
-- Examples: `/help`, `/clear`, `/model`, `/cost`, `/compact`, `/config`
-- You can't modify or customize them
-- They do specific fixed things
 
 **Skills (skill-based commands):**
 - Custom commands that live in `.claude/skills/` directory
@@ -94,49 +81,7 @@ compared to main. Be concise.
 
 Then you can run: `/summarize-changes feature-branch`
 
-**Where does `/statusline` fit?**
-Based on what the agent found, `/statusline` appears to be either a built-in command or a pre-installed skill that spawns a specialized agent to configure your status line.
-
-## Skills: Custom vs Built-in
-
 ## Examples
-
-### /statusline
-
-```
-/statusline I want to show the current git branch, the model name, and context usage percentage
-```
-
-The `/statusline` command triggered a specialized agent to configure a custom status line for Claude Code based on your shell's PS1 prompt configuration.
-
-**What it does:**
-- The status line appears at the bottom of Claude Code's interface
-- It can show useful info like your username, hostname, current directory, git branch, etc.
-- The agent read your `~/.bashrc` to match your existing terminal prompt style (green `user@host`, blue `/path`)
-
-**What you need to do:**
-If you want this feature, you'd add the `statusLine` configuration to your `~/.claude/settings.json` file using one of the two options the agent provided.
-
-**What is the status line?**
-It's the bar at the very bottom of the Claude Code terminal interface. By default it shows things like the model name, cost, and context usage. You can customize it to show whatever you want.
-
-**Where is it configured?**
-In `~/.claude/settings.json` - this is your user-level Claude Code settings file. It affects Claude Code globally (all projects), not just this one.
-
-**What would we change?**
-We'd add a `statusLine` property to that JSON file. It looks something like:
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "some shell command that outputs text"
-  }
-}
-```
-
-**Claude:** You don't need to use the `/statusline` command at all. Just tell me what you want and I can help you directly.
-
-The `/statusline` command is a shortcut that spawns a specialized agent with a default prompt (to read your PS1 config). But since we're already talking about it, just describe what you want here and I'll:
 
 ### /sync-medium
 
