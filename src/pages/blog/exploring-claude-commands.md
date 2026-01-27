@@ -65,23 +65,11 @@ When invoked, Claude receives these instructions
 along with any $ARGUMENTS you passed.
 ```
 
-**Example - Creating your own command:**
+The meta content is actually a sort of syntax for the skill. Claude Code isn't able to know that you have the skill if that content is not there. Here's Claude Code's explanation:
+"I can only see skills that are properly registered and exposed to me through the Skill tool interface. The Skill tool's description lists "Available skills" - that's how I know what skills exist. For a skill to appear in that list, it needs to have the proper metadata/frontmatter configuration. Without that metadata, even if the skill file exists on your filesystem, it won't be registered in the skill system and therefore won't show up in my available
+  skills list."
 
-Create `.claude/skills/summarize-changes/SKILL.md`:
-```yaml
----
-name: summarize-changes
-description: Summarize git changes
-argument-hint: [branch-name]
----
-
-Please summarize the git changes in $ARGUMENTS branch
-compared to main. Be concise.
-```
-
-Then you can run: `/summarize-changes feature-branch`
-
-## Examples
+## Example
 
 ### /sync-medium
 
