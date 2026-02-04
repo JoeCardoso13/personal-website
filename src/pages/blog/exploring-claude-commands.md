@@ -7,29 +7,49 @@ description: "Exploring the fundamentals of Claude Code's skill commmands."
 
 ## Intro
 
-As using Claude Code for assisted coding increases in popularity, the restless developer community does what it can't help but do: automate workflows, build things around, create tools to make smooth transitions, etc. One thing that's becoming more established at the time of this writing is the so-called agentic skill. It consists of a tiny package of knowledge to serve as preparation for the LLM to conduct a certain task. It's essentially a way to save time and effort so that you don't have to keep repeating yourself, and memorizing every detail, everytime you need Claude to do a certain task.
+This is meant to be a short post +for those delving into assisted coding+. The idea is to first provide a distilled, focused conceptual explanation of what skills are, covering all its essentials, including how they're made, and then give one simple example to drive it home. The example is a description of my little hands-on experience writing a skill, which is a very simple use-case indeed, but that's precisely why it's well suited for introductory learning.
 
-Here we'll first delve into what Claude's skills are, explaining its more general aspects, and then we'll create 1 simple skills that'll serve as example to help consolidate the concept.
+A skill consists of a tiny package of knowledge that serves as preparation for the LLM to conduct a certain task. It's essentially a way to save time and effort +so that you don't have to keep repeating yourself and memorizing every detail of the procedure you want to describe, everytime you need Claude to do a certain task+. It's a bridge between the generic capabilities of the LLM, and the more specific user needs.
 
-## Skill
+## The Skill Structure
 
-(Use the fact that this is an open source pattern created by Anthropic - https://agentskills.io/home - and explain the concept of Agents and how it connects to skills)
+(Use the fact that this is an open source pattern created by Anthropic - https://agentskills.io/home - and explain the concept of Agents and how it connects to skills Launch date: December 18, 2025 (open standard announcement))
 
-The pattern is simple:
+Anthropic released the Agent Skills format as an [open standard](https://agentskills.io/) on December 18, 2025. It defines the minimal requirements of a skill as follows. It consists of a directory containing at least one `SKILL.md` file:
+
+```
+skill-name/
+└── SKILL.md          # Required
+```
+
+The `SKILL.md` must have a frontmatter in YAML format followed by the skill's content in Markdown, only `name` and `description` are strictly necessary attributes:
+
+```yaml
+---
+name: my-command
+description: What this command does
+---
+
+Instructions for Claude go here.
+When invoked, Claude receives these instructions
+along with any $ARGUMENTS you passed.
+```
+
+Using the above, in the Claude Code CLI, if you start typing `/my-command` in the terminal Claude will autocomplete for you and show `What this command does` in the right hand side of the screen. And when you use the invocation pattern:
 
 ```
 /command-name [everything after is $ARGUMENTS]
 ```
 
-**How it works:**
-1. Everything after the command name becomes `$ARGUMENTS`
-2. The skill's `SKILL.md` file contains instructions with `$ARGUMENTS` placeholder
-3. Claude receives the instructions with your arguments substituted in
-4. No type checking, no formal separation between "arguments" and "prompt" - it's all just a string
+Everything after the command name becomes `$ARGUMENTS`. The skill's `SKILL.md` file contains instructions that may use the `$ARGUMENTS` placeholder. If so, Claude receives the instructions with your arguments substituted in. But bear in mind that there's no type checking, no formal separation between "arguments" and "prompt" - it's all just a string.
 
-**Example:**
-If a skill's SKILL.md says:
+So if a skill's SKILL.md says:
 ```
+---
+name: fix-issue
+description: Fix a specific GitHub issue.
+---
+
 Fix GitHub issue $ARGUMENTS following our standards.
 ```
 
@@ -38,36 +58,11 @@ And you run `/fix-issue 123`, Claude receives:
 Fix GitHub issue 123 following our standards.
 ```
 
-**The `argument-hint` field** in skill frontmatter is just for autocomplete hints - it documents what arguments are expected but doesn't enforce anything.
+### Aditional Fields
 
-**Skills (skill-based commands):**
-- Custom commands that live in `.claude/skills/` directory
-- Each skill is a folder with a `SKILL.md` file inside
-- You (or others) can create custom skills
-- Skills define instructions that get sent to Claude when invoked
+The `argument-hint` field in skill frontmatter is for autocomplete hints - it documents what arguments are expected. +Expand+
 
-**Structure of a skill:**
-```
-.claude/skills/my-command/
-└── SKILL.md
-```
-
-**Inside SKILL.md:**
-```yaml
----
-name: my-command
-description: What this command does
-argument-hint: [optional arguments]
----
-
-Instructions for Claude go here.
-When invoked, Claude receives these instructions
-along with any $ARGUMENTS you passed.
-```
-
-The meta content is actually a sort of syntax for the skill. Claude Code isn't able to know that you have the skill if that content is not there. Here's Claude Code's explanation:
-"I can only see skills that are properly registered and exposed to me through the Skill tool interface. The Skill tool's description lists "Available skills" - that's how I know what skills exist. For a skill to appear in that list, it needs to have the proper metadata/frontmatter configuration. Without that metadata, even if the skill file exists on your filesystem, it won't be registered in the skill system and therefore won't show up in my available
-  skills list."
+The `metadata` field is helpful for authorship and versioning. +Expand+
 
 ## Example
 
@@ -119,3 +114,7 @@ Returns Cloudflare challenge page: "Enable JavaScript and cookies to continue." 
 **Me:** Eventually if we realize anything can be improved we can always tweak that SKILL.md, right?
 
 **Claude:** Exactly. It's just a markdown file.
+
+## Have A Blast
+
+Now that you're equiped with the knowledge to have control over it, go ahead and browse and install any skill that you want! You can do so +here and here+. There's even a skill to browse and discover skills! Feel free to create your own as well, I think that's a super valid option! Hell, you may even upload yours and make puclicly available if you want!
