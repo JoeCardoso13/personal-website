@@ -2,14 +2,14 @@
 layout: ../../layouts/BlogPost.astro
 title: "Claude Code Tidbits: extending Claude with skills"
 date: "January 26, 2026"
-description: "Exploring the fundamentals of Claude Code's skill commmands."
+description: "Exploring the fundamentals of Claude Code's skill commands."
 ---
 
 ## Intro
 
-This is meant to be a short post +for those delving into assisted coding+. The idea is to first provide a distilled, focused conceptual explanation of what skills are, covering all its essentials, including how they're made, and then give one simple example to drive it home. The example is a description of my little hands-on experience writing a skill, which is a very simple use-case indeed, but that's precisely why it's well suited for introductory learning.
+This is meant to be a short post for developers exploring AI-assisted coding workflows. The idea is to first provide a distilled, focused conceptual explanation of what skills are, covering all its essentials, including how they're made, and then give one simple example to drive it home. The example is a description of my little hands-on experience writing a skill, which is a very simple use-case indeed, but that's precisely why it's well suited for introductory learning.
 
-A skill consists of a tiny package of knowledge that serves as preparation for the LLM to conduct a certain task. It's essentially a way to save time and effort +so that you don't have to keep repeating yourself and memorizing every detail of the procedure you want to describe, everytime you need Claude to do a certain task+. It's a bridge between the generic capabilities of the LLM, and the more specific user needs.
+A skill consists of a tiny package of knowledge that serves as preparation for the LLM to conduct a certain task. It's essentially a way to save time and effort, eliminating the need to repeatedly explain the same workflows every time you need Claude to perform a specific task. It's a bridge between the generic capabilities of the LLM, and the more specific user needs.
 
 ## The Skill Structure
 
@@ -58,11 +58,13 @@ And you run `/fix-issue 123`, Claude receives:
 Fix GitHub issue 123 following our standards.
 ```
 
-### Aditional Fields
+### Additional Fields
 
-The `argument-hint` field in skill frontmatter is for autocomplete hints - it documents what arguments are expected. +Expand+
+The `argument-hint` field in skill frontmatter is for autocomplete hints - it documents what arguments are expected. It's displayed during autocomplete to guide users on what parameters to provide (e.g., `argument-hint: [filename] [format]`). While helpful for discoverability, it's important to note this is a Claude Code enhancement rather than part of the official Agent Skills specification.
 
-The `metadata` field is helpful for authorship and versioning. +Expand+
+The `metadata` field is helpful for authorship and versioning. It's an optional key-value map for storing additional properties like `author`, `version`, or custom fields your organization needs. The Agent Skills specification recommends making key names reasonably unique to avoid conflicts.
+
++++BEGIN+++
 
 ## Example
 
@@ -117,4 +119,6 @@ Returns Cloudflare challenge page: "Enable JavaScript and cookies to continue." 
 
 ## Have A Blast
 
-Now that you're equiped with the knowledge to have control over it, go ahead and browse and install any skill that you want! You can do so +here and here+. There's even a skill to browse and discover skills! Feel free to create your own as well, I think that's a super valid option! Hell, you may even upload yours and make puclicly available if you want!
+Now that you're equipped with the knowledge to have control over it, go ahead and browse and install any skill that you want! You can do so +here and here+. There's even a skill to browse and discover skills! Feel free to create your own as well, I think that's a super valid option! Hell, you may even upload yours and make publicly available if you want!
+
++++END+++
