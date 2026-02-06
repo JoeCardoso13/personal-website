@@ -7,22 +7,20 @@ description: "Exploring the fundamentals of Claude Code's skill commands."
 
 ## Intro
 
-This is meant to be a short post for developers exploring AI-assisted coding workflows. The idea is to first provide a distilled, focused conceptual explanation of what skills are, covering all its essentials, including how they're made, and then give one simple example to drive it home. The example is a description of my little hands-on experience writing a skill, which is a very simple use-case indeed, but that's precisely why it's well suited for introductory learning.
+This is a short, practical intro to Claude Code skills. I give a focused explanation followed by a hands-on example from my own experience. It is a very simple use-case indeed, but that's precisely why it's well suited for introductory learning.
 
-A skill consists of a tiny package of knowledge that serves as preparation for the LLM to conduct a certain task. It's essentially a way to save time and effort, eliminating the need to repeatedly explain the same workflows every time you need Claude to perform a specific task. It's a bridge between the generic capabilities of the LLM, and the more specific user needs.
+Fundamentally, a skill is just a markdown file with instructions for Claude. It saves you from having to repeat the same workflows over and over - you write them once, invoke them by name, and Claude follows the instructions. It's a bridge between the LLM's generic capabilities and your specific needs.
 
-## The Skill Structure
+## Anatomy of a Skill
 
-(Use the fact that this is an open source pattern created by Anthropic - https://agentskills.io/home - and explain the concept of Agents and how it connects to skills Launch date: December 18, 2025 (open standard announcement))
-
-Anthropic released the Agent Skills format as an [open standard](https://agentskills.io/) on December 18, 2025. It defines the minimal requirements of a skill as follows. It consists of a directory containing at least one `SKILL.md` file:
+Released by Anthropic as an [open standard](https://agentskills.io/) on December 18, 2025, skills are a format that any AI agent can adopt. Here we'll focus on how they work in Claude Code, where each skill lives as a named directory in `~/.claude/skills/` with a `SKILL.md` file inside. The directory name must match the skill's `name` field:
 
 ```
 skill-name/
 └── SKILL.md          # Required
 ```
 
-The `SKILL.md` must have a frontmatter in YAML format followed by the skill's content in Markdown, only `name` and `description` are strictly necessary attributes:
+The `SKILL.md` starts with YAML frontmatter - only `name` and `description` are required - followed by the skill's instructions in Markdown:
 
 ```yaml
 ---
@@ -35,15 +33,8 @@ When invoked, Claude receives these instructions
 along with any $ARGUMENTS you passed.
 ```
 
-Using the above, in the Claude Code CLI, if you start typing `/my-command` in the terminal Claude will autocomplete for you and show `What this command does` in the right hand side of the screen. And when you use the invocation pattern:
+To use a skill, type `/` and its name in Claude Code - autocomplete will help you find it. Anything after the command name becomes `$ARGUMENTS`, which gets substituted directly into the skill's instructions. No type checking, no parsing - just string replacement. Here's an example:
 
-```
-/command-name [everything after is $ARGUMENTS]
-```
-
-Everything after the command name becomes `$ARGUMENTS`. The skill's `SKILL.md` file contains instructions that may use the `$ARGUMENTS` placeholder. If so, Claude receives the instructions with your arguments substituted in. But bear in mind that there's no type checking, no formal separation between "arguments" and "prompt" - it's all just a string.
-
-So if a skill's SKILL.md says:
 ```
 ---
 name: fix-issue
@@ -53,16 +44,15 @@ description: Fix a specific GitHub issue.
 Fix GitHub issue $ARGUMENTS following our standards.
 ```
 
-And you run `/fix-issue 123`, Claude receives:
+Running `/fix-issue 123` makes Claude receive:
 ```
 Fix GitHub issue 123 following our standards.
 ```
 
-### Additional Fields
-
-The `argument-hint` field in skill frontmatter is for autocomplete hints - it documents what arguments are expected. It's displayed during autocomplete to guide users on what parameters to provide (e.g., `argument-hint: [filename] [format]`). While helpful for discoverability, it's important to note this is a Claude Code enhancement rather than part of the official Agent Skills specification.
-
-The `metadata` field is helpful for authorship and versioning. It's an optional key-value map for storing additional properties like `author`, `version`, or custom fields your organization needs. The Agent Skills specification recommends making key names reasonably unique to avoid conflicts.
+That's the core of it. Beyond `name` and `description`, there are a few optional frontmatter fields worth mentioning:
+- `argument-hint`: tells the CLI what to show during autocomplete, so users know what parameters to pass (e.g., `[filename] [format]`).
+- `metadata`: a key-value map for things like authorship and versioning (e.g., `author: "my-org"`, `version: "1.0"`).
+- `allowed-tools`: a space-delimited list of tools the skill is pre-approved to use (e.g., `Bash(git:*) Read`).
 
 +++BEGIN+++
 
