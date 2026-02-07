@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="300" rx="16" fill="#0a0a0a"/>
+
+  <!-- Terminal window bar -->
+  <rect width="600" height="36" rx="16" fill="#1a1a1a"/>
+  <rect x="0" y="16" width="600" height="20" fill="#1a1a1a"/>
+  <circle cx="24" cy="18" r="6" fill="#ff5f56"/>
+  <circle cx="44" cy="18" r="6" fill="#ffbd2e"/>
+  <circle cx="64" cy="18" r="6" fill="#27c93f"/>
+
+  <!-- Cookie with bite taken out -->
+  <g transform="translate(120, 148)">
+    <!-- Cookie body -->
+    <circle cx="0" cy="0" r="52" fill="#e8915a"/>
+    <!-- Bite mark (subtract via overlay) -->
+    <circle cx="38" cy="-38" r="24" fill="#0a0a0a"/>
+    <!-- Chocolate chips -->
+    <circle cx="-18" cy="-14" r="6" fill="#8B4513"/>
+    <circle cx="10" cy="8" r="7" fill="#8B4513"/>
+    <circle cx="-8" cy="24" r="5" fill="#8B4513"/>
+    <circle cx="18" cy="-26" r="5" fill="#8B4513"/>
+    <!-- Cookie texture dots -->
+    <circle cx="-30" cy="8" r="3" fill="#d4804e"/>
+    <circle cx="4" cy="-30" r="3" fill="#d4804e"/>
+    <circle cx="26" cy="20" r="3" fill="#d4804e"/>
+  </g>
+
+  <!-- Terminal cursor next to cookie -->
+  <rect x="188" y="136" width="14" height="24" fill="#00ff9f" opacity="0.9">
+    <animate attributeName="opacity" values="0.9;0;0.9" dur="1.2s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Text: Claude Tidbits -->
+  <text x="220" y="142" font-family="'JetBrains Mono', monospace" font-size="38" font-weight="700" fill="#e0e0e0">Claude</text>
+  <text x="220" y="180" font-family="'JetBrains Mono', monospace" font-size="38" font-weight="700" fill="#00ff9f">Tidbits</text>
+
+</svg>

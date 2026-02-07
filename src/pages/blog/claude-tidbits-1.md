@@ -3,6 +3,7 @@ layout: ../../layouts/BlogPost.astro
 title: "Claude Code Tidbits: extending Claude with skills"
 date: "January 26, 2026"
 description: "Exploring the fundamentals of Claude Code's skill commands."
+banner: /claude-tidbits-logo.svg
 ---
 
 ## Intro

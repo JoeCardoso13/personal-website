@@ -6,6 +6,7 @@ interface Props {
     title: string;
     date: string;
     description: string;
+    banner?: string;
   };
 }
 
@@ -15,6 +16,7 @@ const { frontmatter } = Astro.props;
 <Layout title={frontmatter.title} description={frontmatter.description}>
   <article class="blog-post">
     <header class="post-header">
+      {frontmatter.banner && <img class="post-banner" src={frontmatter.banner} alt="" />}
       <time>{frontmatter.date}</time>
       <h1>{frontmatter.title}</h1>
       <p class="subtitle">{frontmatter.description}</p>
@@ -33,6 +35,13 @@ const { frontmatter } = Astro.props;
 <style>
   .blog-post {
     max-width: 100%;
+  }
+
+  .post-banner {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
   }
 
   .post-header {
