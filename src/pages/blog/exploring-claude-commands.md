@@ -54,60 +54,23 @@ That's the core of it. Beyond `name` and `description`, there are a few optional
 - `metadata`: a key-value map for things like authorship and versioning (e.g., `author: "my-org"`, `version: "1.0"`).
 - `allowed-tools`: a space-delimited list of tools the skill is pre-approved to use (e.g., `Bash(git:*) Read`).
 
-+++BEGIN+++
-
 ## Example
 
 ### /sync-medium
 
-I write my blog posts locally in markdown, but I also cross-post them to Medium. Sometimes I make edits on Medium (typos, better phrasing) and want to sync those changes back to my codebase. This was a manual copy-paste workflow, so I asked Claude to turn it into a skill.
+I write my blog posts on my personal website ([joecardoso.dev](https://joecardoso.dev)) first, then cross-post them to Medium. Edits happen after publishing though, and manually syncing changes across both platforms gets old fast.
 
-**Me:** See this workflow where I copy-paste a Medium article and you compare it with the codebase version? I want to turn that into a skill.
+Medium makes it easy to import a post from a URL — but only at publish time. Once the post is live on both platforms, there's no built-in way to sync subsequent edits. So I built a skill called `/sync-medium` to solve that.
 
-**Claude:** Created `~/.claude/skills/sync-medium/SKILL.md` with instructions for receiving pasted content, finding the matching blog post, and applying updates.
+Designing the skill meant breaking the problem into clear steps: fetch the article from Medium, compare it against the local `.md` file, and apply any differences. A small pipeline, but a real one.
 
-**Me:** What if we could fetch the Medium article from a URL instead of copy-pasting?
+Implementation surfaced a few details the design didn't anticipate. Medium blocks bot requests, so the skill fetches through `scribe.rip` instead. The frontmatter — publish date, layout, description — also needed to be preserved during syncing. Small issues, but the kind that only show up when you start turning a plan into working code.
 
-**Claude:** Let me try WebFetch...
-```
-WebFetch: https://medium.com/@joecardoso1312/my-article
-Error: 403 Forbidden
-```
-
-**Claude:** Medium blocks direct fetches. Let me try scribe.rip, a Medium mirror...
-```
-WebFetch: https://scribe.rip/@joecardoso1312/my-article
-Result: [summarized content]
-```
-
-**Me:** It worked but WebFetch summarizes the content. Can't you just fetch the raw HTML?
-
-**Claude:** You're right - I can use curl instead.
-```bash
-curl -s "https://scribe.rip/@joecardoso1312/my-article"
-```
-Returns full HTML with all the article content intact.
-
-**Me:** What about curling the original Medium URL?
-
-**Claude:**
-```bash
-curl -s "https://medium.com/@joecardoso1312/my-article"
-```
-Returns Cloudflare challenge page: "Enable JavaScript and cookies to continue." Medium blocks automated requests, which is why scribe.rip is the workaround.
-
-**The final skill workflow:**
-1. User provides Medium URL
-2. Claude converts `medium.com` → `scribe.rip`
-3. Fetches raw HTML with curl
-4. Parses content and compares with blog post
-5. Applies updates while preserving frontmatter and relative links
-
-**Me:** Eventually if we realize anything can be improved we can always tweak that SKILL.md, right?
-
-**Claude:** Exactly. It's just a markdown file.
++++BEGIN+++
 
 ## Have A Blast
+
+(This section should briefly comment on the channels to share and consume (upload and download) skills from, and all possibilities unlocked with it, in an excited tone and playful voice)
 
 Now that you're equipped with the knowledge to have control over it, go ahead and browse and install any skill that you want! You can do so +here and here+. There's even a skill to browse and discover skills! Feel free to create your own as well, I think that's a super valid option! Hell, you may even upload yours and make publicly available if you want!
 
