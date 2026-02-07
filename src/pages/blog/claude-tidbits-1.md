@@ -7,9 +7,9 @@ description: "Exploring the fundamentals of Claude Code's skill commands."
 
 ## Intro
 
-This is a short, practical intro to Claude Code skills. I give a focused explanation followed by a hands-on example from my own experience. It is a very simple use-case indeed, but that's precisely why it's well suited for introductory learning.
+This is a short, practical intro to [Claude Code skills](https://code.claude.com/docs/en/skills). I give a focused explanation followed by a hands-on example from my own experience. It is a very simple use-case indeed, but that's precisely why it's well suited for introductory learning.
 
-Fundamentally, a skill is just a markdown file with instructions for Claude. It saves you from having to repeat the same workflows over and over - you write them once, invoke them by name, and Claude follows the instructions. It's a bridge between the LLM's generic capabilities and your specific needs.
+Fundamentally, a skill is just a [markdown file with instructions](https://agentskills.io/specification) for Claude. It saves you from having to repeat the same workflows over and over - you write them once, invoke them by name, and Claude follows the instructions. It's a bridge between the LLM's generic capabilities and your specific needs.
 
 ## Anatomy of a Skill
 
@@ -66,12 +66,9 @@ Designing the skill meant breaking the problem into clear steps: fetch the artic
 
 Implementation surfaced a few details the design didn't anticipate. Medium blocks bot requests, so the skill fetches through `scribe.rip` instead. The frontmatter — publish date, layout, description — also needed to be preserved during syncing. Small issues, but the kind that only show up when you start turning a plan into working code.
 
-+++BEGIN+++
 
 ## Have A Blast
 
-(This section should briefly comment on the channels to share and consume (upload and download) skills from, and all possibilities unlocked with it, in an excited tone and playful voice)
+Now that you've got the fundamentals down, go explore. The [Anthropic skills repository](https://github.com/anthropics/skills) has a curated collection of official skills, and community-driven registries like [claude-plugins.dev](https://claude-plugins.dev/skills) are popping up with all sorts of creative contributions — someone even built a skill that [browses and installs other skills](https://claude-plugins.dev/skills/@Kamalnrf/claude-plugins/skills-discovery) for you.
 
-Now that you're equipped with the knowledge to have control over it, go ahead and browse and install any skill that you want! You can do so +here and here+. There's even a skill to browse and discover skills! Feel free to create your own as well, I think that's a super valid option! Hell, you may even upload yours and make publicly available if you want!
-
-+++END+++
+Want to build your own? You already know how. A folder, a `SKILL.md`, and whatever workflow you've been doing manually. And if you're proud of what you've made, publish it — the ecosystem is early enough that your contribution could become someone else's favorite tool. The format is open, the community is growing, and Claude Code is ready when you are.
