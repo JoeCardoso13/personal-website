@@ -9,32 +9,6 @@ banner: /claude-tidbits-logo.svg
 ---
 (Reference Material - Development Only)
 
-## The Core Agentic Loop
-
-Every Claude Code agent follows the same cycle, from the [Agent SDK docs](https://platform.claude.com/docs/en/agent-sdk/agent-loop):
-
-> receive prompt → evaluate → execute tools → observe results → repeat
-
-Claude doesn't stop after one step. It keeps calling tools and processing results until the task is done. Each full cycle is one **turn**. A simple task might take two turns; a complex refactor can chain dozens.
-
-The loop can be capped with `max_turns` or `max_budget_usd`. Without limits, it runs until Claude finishes on its own — fine for scoped tasks, dangerous for open-ended ones like "improve this codebase."
-
-Key insight: **the loop is not a feature, it's the architecture.** Everything else — skills, subagents, hooks — builds on top of this loop.
-
----
-
-## The /loop Skill (The Polling Primitive)
-
-From the [skills docs](https://code.claude.com/docs/en/skills):
-
-> `/loop [interval] <prompt>` — Run a prompt repeatedly on an interval while the session stays open. Useful for polling a deployment, babysitting a PR, or periodically re-running another skill.
-
-Example: `/loop 5m check if the deploy finished`
-
-This is the simplest form of an agentic loop: a scheduled prompt that re-runs itself. The interval is human-readable (`5m`, `30s`). The prompt can invoke *another skill*, which is where things get interesting — `/loop` becomes an orchestrator for other agents.
-
----
-
 ## The Evaluator-Optimizer Pattern
 
 From [Anthropic's Building Effective Agents](https://www.anthropic.com/research/building-effective-agents):
@@ -92,45 +66,14 @@ This is the evaluator-optimizer loop applied to skill authorship. You're the eva
 
 The key difference from writing a skill manually: **Claude can observe the skill's actual output and self-correct** in a way a human writing instructions in isolation can't. It closes the loop between "what the instructions say" and "what the instructions produce."
 
----
+## The Onboarding Repo to Which I'm the #1 Contributor
 
-## The /simplify Skill as a Real Example
-
-From the skills docs, `/simplify` is a bundled skill that demonstrates this pattern in action:
-
-> "Review your recently changed files for code reuse, quality, and efficiency issues, then fix them. Spawns **three review agents in parallel**, aggregates their findings, and applies fixes."
-
-This is an agentic loop:
-- Three agents run concurrently, each evaluating the code from a different angle
-- Their findings are aggregated by an orchestrator
-- The orchestrator applies fixes
-
-The parallel evaluation + aggregation + apply pattern is directly applicable to skill improvement: spawn multiple evaluator agents on a skill's output, aggregate feedback, rewrite the skill.
-
----
-
-## Key Technical Details (for accuracy in the post)
-
-**Skills live at:**
-- `~/.claude/skills/<name>/SKILL.md` (personal, all projects)
-- `.claude/skills/<name>/SKILL.md` (project-scoped)
-
-**The description field is load-bearing:**
-> Claude uses the description to decide when to auto-invoke a skill. If the description is vague or too long (capped at 250 chars in the listing), the skill won't trigger reliably.
-
-**context: fork** runs a skill in an isolated subagent. The subagent doesn't inherit the parent's conversation history — it starts clean. This is important for evaluation agents: you want them to evaluate the output in isolation, not be influenced by the generation conversation.
-
-**Shell injection in skills** (`` !`command` ``) executes before Claude sees the prompt. This means a skill can fetch live data (test results, CI status, diff) and inject it into its own instructions — a form of self-contextualization.
+From [Contributor Toolkit GitHub Repo](https://github.com/NimbleBrainInc/contributor-toolkit):
 
 ---
 
 ## Relevant Sources
 
-- [How the agent loop works — Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/agent-loop)
-- [Extend Claude with skills — Claude Code Docs](https://code.claude.com/docs/en/skills)
 - [Building effective agents — Anthropic](https://www.anthropic.com/research/building-effective-agents)
 - [The Learnings Loop — MindStudio](https://www.mindstudio.ai/blog/learnings-loop-claude-code-skills-self-improvement)
-- [Claude Code: How to Write, Eval, and Iterate on a Skill — mager.co](https://www.mager.co/blog/2026-03-08-claude-code-eval-loop/)
-- [Claude Code Agent Skills 2.0 — Towards AI](https://pub.towardsai.net/claude-code-agent-skills-2-0-from-custom-instructions-to-programmable-agents-ab6e4563c176)
-- [What Is the Agentic OS Architecture? — MindStudio](https://www.mindstudio.ai/blog/agentic-os-architecture-claude-code-skills)
 - [2026 Agentic Coding Trends Report — Anthropic](https://resources.anthropic.com/2026-agentic-coding-trends-report)
