@@ -72,8 +72,65 @@ From [Contributor Toolkit GitHub Repo](https://github.com/NimbleBrainInc/contrib
 
 ---
 
+## Progressive Disclosure
+
+### The UX Origin
+
+From [Progressive Disclosure — Jakob Nielsen, NNGroup (2006)](https://www.nngroup.com/articles/progressive-disclosure/):
+
+> "Initially, show users only a few of the most important options. Offer a larger set of specialized options upon request."
+
+The classic UX principle: manage complexity by revealing it in layers, not all at once. Two requirements: knowing which features are primary vs. secondary, and providing clear pathways to access depth.
+
+---
+
+### The Agent Engineering Translation
+
+From [Building an internal agent: Progressive disclosure and handling large files — Will Larson](https://lethain.com/agents-large-files/):
+
+> "Progressive disclosure is the practice of limiting what is added to the context window to the minimum necessary amount, and adding more detail over time as necessary."
+
+Larson applies the pattern to agents: give the agent metadata first (IDs, names, sizes), then load detail on demand via tools. His framing: the glue layer between LLMs and tools is "a complex, sophisticated application layer rather than merely glue" — structuring *what* the agent sees *when* is real engineering work.
+
+---
+
+### Context Engineering as the Discipline
+
+From [Effective context engineering for AI agents — Anthropic Engineering Blog (September 29, 2025)](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents):
+
+> "Context engineering refers to the set of strategies for curating and maintaining the optimal set of tokens (information) during LLM inference."
+
+Key ideas:
+- **Just-in-time loading**: agents "maintain lightweight identifiers and use these references to dynamically load data into context at runtime using tools"
+- **Progressive discovery**: "allows agents to incrementally discover relevant context through exploration — each interaction yields context that informs the next decision"
+- Human cognition analogy: "we generally don't memorize entire corpuses of information, but rather introduce external organization and indexing systems... to retrieve relevant information on demand"
+
+---
+
+### The AI-Specific Framing
+
+From [Progressive Disclosure: the technique that helps control context (and tokens) in AI agents — Marta Fernández García, Medium (February 24, 2026)](https://medium.com/@martia_es/progressive-disclosure-the-technique-that-helps-control-context-and-tokens-in-ai-agents-8d6108b09289):
+
+> "Progressive Disclosure is a pattern borrowed from UI design that manages context in AI agents by revealing information in layers rather than loading everything upfront."
+
+> "The main goal is not simply saving tokens; cost reduction is a consequence of better context management. Models perform better when they receive the relevant information at the right moment."
+
+The point is not cost optimization — it's reasoning quality. A 6,600-token skill loaded upfront isn't just wasteful, it degrades the agent's ability to navigate the task.
+
+---
+
+### What the Existing Writing Misses
+
+None of these sources discuss using **phase gates** as part of the pattern — explicit checkpoints between phases that enforce correctness before the agent loads the next chunk of context. That's where the evaluator-optimizer pattern intersects with the structural design.
+
+---
+
 ## Relevant Sources
 
 - [Building effective agents — Anthropic](https://www.anthropic.com/research/building-effective-agents)
 - [The Learnings Loop — MindStudio](https://www.mindstudio.ai/blog/learnings-loop-claude-code-skills-self-improvement)
 - [2026 Agentic Coding Trends Report — Anthropic](https://resources.anthropic.com/2026-agentic-coding-trends-report)
+- [Progressive Disclosure — Jakob Nielsen, NNGroup](https://www.nngroup.com/articles/progressive-disclosure/)
+- [Building an internal agent: Progressive disclosure and handling large files — Will Larson](https://lethain.com/agents-large-files/)
+- [Effective context engineering for AI agents — Anthropic Engineering Blog](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+- [Progressive Disclosure: the technique that helps control context (and tokens) in AI agents — Marta Fernández García](https://medium.com/@martia_es/progressive-disclosure-the-technique-that-helps-control-context-and-tokens-in-ai-agents-8d6108b09289)
