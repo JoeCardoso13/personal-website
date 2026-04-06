@@ -1,11 +1,21 @@
 ---
 layout: ../../layouts/BlogPost.astro
 title: "Claude Code Tidbits: using agents to build better agents with loops"
-date: "April 4, 2026"
-description: "Exploring the idea of using agents to write skills for other agents, and iterating with feedback to improve them over time."
+date: "March 13, 2026"
+description: "Working on the contributor-toolkit GitHub repo from NimbleBrain's Open Source codebase, I engineered an agentic feedback loop to improve their auto-onboarding process."
 banner: /claude-tidbits-logo.svg
 ---
 
+> Open Source auto-onboarding codebase: [contributor-toolkit](https://github.com/NimbleBrainInc/contributor-toolkit)
+
+## Intro
+
+( This topic has a lot to do with what I have specialized during my Mechanical Engineering studies: Feedback Control. This theory is based on a system that feeds itself from its errors - defined as the distance between the actual and desired output. The agentic learning loop immediately hits home to me. )
+
+
+( As of this date, I am the #1 contributor to this repo. )
+
++++BEGIN+++
 ---
 (Reference Material - Development Only)
 
@@ -134,3 +144,5 @@ None of these sources discuss using **phase gates** as part of the pattern — e
 - [Building an internal agent: Progressive disclosure and handling large files — Will Larson](https://lethain.com/agents-large-files/)
 - [Effective context engineering for AI agents — Anthropic Engineering Blog](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
 - [Progressive Disclosure: the technique that helps control context (and tokens) in AI agents — Marta Fernández García](https://medium.com/@martia_es/progressive-disclosure-the-technique-that-helps-control-context-and-tokens-in-ai-agents-8d6108b09289)
+
++++END+++
