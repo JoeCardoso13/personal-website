@@ -1,0 +1,12 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Chat from '../components/Chat.svelte';
+---
+
+<Layout title="brush-up-py - Python Tutor" description="A Socratic Python tutor powered by AI">
+  <section>
+    <h2>$ python brush-up-py</h2>
+    <p>A Socratic Python tutor. Ask a question about any Python topic and it will guide you through the answer.</p>
+    <Chat client:load />
+  </section>
+</Layout>
