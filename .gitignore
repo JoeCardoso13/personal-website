@@ -28,5 +28,9 @@ pnpm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 
+# ai agents
+.claude
+.codex
+
 # misc
 *.log

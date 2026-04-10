@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { marked } from 'marked';
   import { sendMessage } from '../lib/api';
   import type { ApiError, ChatMessage } from '../lib/api';
@@ -10,10 +10,19 @@
   let messages: ChatMessage[] = [];
   let isLoading = false;
   let errorMessage = '';
+  let messagesEl: HTMLDivElement;
+
+  async function scrollToBottom(): Promise<void> {
+    await tick();
+    if (messagesEl) {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+  }
 
   onMount(() => {
     userId = getUserId();
     messages = getHistory();
+    void scrollToBottom();
   });
 
   function renderMarkdown(content: string): string {
@@ -43,6 +52,7 @@
 
     const history = messages;
     messages = [...messages, { role: 'user', content: question }];
+    void scrollToBottom();
     input = '';
     errorMessage = '';
     isLoading = true;
@@ -54,6 +64,7 @@
         conversation_history: history,
       });
       messages = response.history;
+      void scrollToBottom();
       setHistory(response.history);
     } catch (error) {
       errorMessage = getErrorMessage(error);
@@ -71,7 +82,7 @@
 </script>
 
 <section class="chat" aria-label="Python study chat">
-  <div class="messages" aria-live="polite">
+  <div bind:this={messagesEl} class="messages" aria-live="polite">
     {#each messages as message}
       <article class={`message ${message.role}`}>
         {@html renderMarkdown(message.content)}
@@ -104,13 +115,16 @@
     display: grid;
     gap: 1rem;
     max-width: 48rem;
-    margin: 2rem auto;
+    margin: 0 auto;
     padding: 0 1.5rem;
   }
 
   .messages {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 0.75rem;
+    max-height: 60dvh;
+    overflow-y: auto;
   }
 
   .message,
