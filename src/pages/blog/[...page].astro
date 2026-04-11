@@ -1,0 +1,192 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allPosts = import.meta.glob('./*.md', { eager: true });
+
+  const posts = Object.entries(allPosts)
+    .map(([path, post]: [string, any]) => ({
+      title: post.frontmatter.title,
+      slug: path.split('/').pop()?.replace('.md', ''),
+      date: post.frontmatter.date,
+      description: post.frontmatter.description,
+    }))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  return paginate(posts, { pageSize: 3 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<Layout title="Blog - Joe Cardoso">
+  <h1>$ ls blog/*</h1>
+
+  <div class="blog-list">
+    {page.data.map((post) => (
+      <article class="post-preview">
+        <div class="post-meta">
+          <time>{post.date}</time>
+        </div>
+        <h2>
+          <a href={`/blog/${post.slug}`}>{post.title}</a>
+        </h2>
+        <p>{post.description}</p>
+        <a href={`/blog/${post.slug}`} class="read-more">read more →</a>
+      </article>
+    ))}
+  </div>
+
+  <footer class="blog-footer">
+    {page.lastPage > 1 && (
+      <nav class="pagination" aria-label="Blog pagination">
+        <div class="page-numbers">
+          {Array.from({ length: page.lastPage }, (_, i) => i + 1).map((num) =>
+            num === page.currentPage ? (
+              <span class="page-num active">[{num}]</span>
+            ) : (
+              <a href={num === 1 ? '/blog' : `/blog/${num}`} class="page-num">{num}</a>
+            )
+          )}
+        </div>
+        <div class="page-nav">
+          {page.url.prev ? (
+            <a href={page.url.prev} class="nav-link">prev</a>
+          ) : (
+            <span class="nav-link disabled">prev</span>
+          )}
+          <span class="nav-sep">|</span>
+          {page.url.next ? (
+            <a href={page.url.next} class="nav-link">next</a>
+          ) : (
+            <span class="nav-link disabled">next</span>
+          )}
+        </div>
+      </nav>
+    )}
+
+  </footer>
+</Layout>
+
+<style>
+  h1 {
+    color: var(--accent);
+    margin-bottom: 3rem;
+  }
+
+  .blog-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .post-preview {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2rem;
+  }
+
+  .post-preview:last-child {
+    border-bottom: none;
+  }
+
+  .post-meta {
+    margin-bottom: 0.5rem;
+  }
+
+  .post-meta time {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  .post-preview h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    margin-top: 0;
+  }
+
+  .post-preview h2 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .post-preview h2 a:hover {
+    color: var(--accent);
+  }
+
+  .post-preview p {
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+
+  .read-more {
+    font-size: 0.95rem;
+    color: var(--accent);
+  }
+
+  .read-more:hover {
+    text-decoration: underline;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .page-numbers {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .page-num {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .page-num:hover {
+    color: var(--accent);
+  }
+
+  .page-num.active {
+    color: var(--accent);
+  }
+
+  .page-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  .nav-link:hover:not(.disabled) {
+    text-decoration: underline;
+  }
+
+  .nav-link.disabled {
+    color: var(--text-dim);
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .nav-sep {
+    color: var(--text-dim);
+    opacity: 0.3;
+  }
+
+  .blog-footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+</style>

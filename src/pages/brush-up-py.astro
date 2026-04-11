@@ -1,0 +1,133 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Chat from '../components/Chat.svelte';
+---
+
+<Layout title="brush-up-py - Python Tutor" description="A Socratic Python tutor powered by AI">
+  <section class="chat-page">
+    <div class="chat-intro">
+      <div class="chat-intro-row">
+        <h2>$ python brush-up-py</h2>
+        <button id="clear-chat-btn" class="reset-btn" aria-label="Clear chat" title="Clear chat" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+        </button>
+      </div>
+      <p>A Socratic Python tutor — ask about any Python topic.</p>
+    </div>
+    <Chat client:load />
+  </section>
+</Layout>
+
+<script>
+  const clearButton = document.getElementById('clear-chat-btn');
+
+  clearButton?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('brush-up-py:clear-chat'));
+  });
+</script>
+
+<style>
+  /* Lock viewport so only the messages area scrolls */
+  :global(.container) {
+    height: 100dvh;
+    overflow: hidden;
+    padding-top: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  :global(header) {
+    margin-bottom: 0.75rem;
+  }
+
+  :global(footer) {
+    display: none;
+  }
+
+  :global(main) {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .chat-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    margin-bottom: 0 !important;
+  }
+
+  .chat-intro {
+    flex-shrink: 0;
+    margin-bottom: 1rem;
+  }
+
+  .chat-intro-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .chat-intro h2 {
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+  }
+
+  .reset-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    opacity: 0.35;
+    transition: opacity 0.15s, color 0.15s;
+  }
+
+  .reset-btn:hover {
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  .chat-intro p {
+    margin-bottom: 0;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+
+  @media (max-width: 640px) {
+    :global(.container) {
+      padding: 0.5rem 0.75rem 0.5rem;
+    }
+
+    /* Keep nav horizontal on the chat page */
+    :global(nav) {
+      flex-direction: row !important;
+      align-items: center !important;
+    }
+
+    :global(header) {
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .chat-intro {
+      margin-bottom: 0.5rem;
+    }
+
+    .chat-intro h2 {
+      font-size: 0.95rem;
+    }
+
+    .chat-intro p {
+      font-size: 0.78rem;
+    }
+  }
+</style>
