@@ -224,7 +224,7 @@ describe('Chat component — loading state', () => {
     expect(screen.getByTestId('loading-indicator')).toBeInTheDocument();
   });
 
-  it('re-enables input and button after response', async () => {
+  it('re-enables the input after response but keeps send disabled until new input', async () => {
     mockedApi.sendMessage.mockResolvedValue({
       response: 'Done!',
       history: [],
@@ -239,8 +239,8 @@ describe('Chat component — loading state', () => {
     await fireEvent.click(button);
 
     await waitFor(() => {
-      expect(button).not.toBeDisabled();
       expect(input).not.toBeDisabled();
+      expect(button).toBeDisabled();
     });
   });
 });
@@ -285,7 +285,7 @@ describe('Chat component — error handling', () => {
     });
   });
 
-  it('re-enables input after an error', async () => {
+  it('re-enables the input after an error but keeps send disabled until new input', async () => {
     mockedApi.sendMessage.mockRejectedValue({ code: 'api_error', message: 'Something went wrong.' });
 
     render(Chat);
@@ -295,8 +295,8 @@ describe('Chat component — error handling', () => {
     await fireEvent.click(button);
 
     await waitFor(() => {
-      expect(button).not.toBeDisabled();
       expect(input).not.toBeDisabled();
+      expect(button).toBeDisabled();
     });
   });
 });
