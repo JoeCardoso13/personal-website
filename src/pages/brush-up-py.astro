@@ -4,9 +4,86 @@ import Chat from '../components/Chat.svelte';
 ---
 
 <Layout title="brush-up-py - Python Tutor" description="A Socratic Python tutor powered by AI">
-  <section>
-    <h2>$ python brush-up-py</h2>
-    <p>A Socratic Python tutor. Ask a question about any Python topic and it will guide you through the answer.</p>
+  <section class="chat-page">
+    <div class="chat-intro">
+      <h2>$ python brush-up-py</h2>
+      <p>A Socratic Python tutor — ask about any Python topic.</p>
+    </div>
     <Chat client:load />
   </section>
 </Layout>
+
+<style>
+  /* Lock viewport so only the messages area scrolls */
+  :global(.container) {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  :global(header) {
+    margin-bottom: 1.5rem;
+  }
+
+  :global(footer) {
+    display: none;
+  }
+
+  :global(main) {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .chat-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    margin-bottom: 0 !important;
+  }
+
+  .chat-intro {
+    flex-shrink: 0;
+    margin-bottom: 1rem;
+  }
+
+  .chat-intro h2 {
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+  }
+
+  .chat-intro p {
+    margin-bottom: 0;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+
+  @media (max-width: 640px) {
+    :global(.container) {
+      padding: 1rem 0.75rem;
+    }
+
+    /* Keep nav horizontal on the chat page */
+    :global(nav) {
+      flex-direction: row !important;
+      align-items: center !important;
+    }
+
+    :global(header) {
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .chat-intro {
+      margin-bottom: 0.5rem;
+    }
+
+    .chat-intro h2 {
+      font-size: 0.95rem;
+    }
+
+    .chat-intro p {
+      font-size: 0.78rem;
+    }
+  }
+</style>
