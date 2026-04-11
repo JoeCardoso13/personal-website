@@ -30,6 +30,11 @@ const pages: typeof projects[] = [];
 for (let i = 0; i < projects.length; i += PAGE_SIZE) {
   pages.push(projects.slice(i, i + PAGE_SIZE));
 }
+// Ensure the last page is full by pulling from earlier items
+if (pages.length > 1 && pages[pages.length - 1].length < PAGE_SIZE) {
+  const lastPageStart = projects.length - PAGE_SIZE;
+  pages[pages.length - 1] = projects.slice(lastPageStart);
+}
 
 const allPosts = import.meta.glob('./blog/*.md', { eager: true });
 const recentPosts = Object.entries(allPosts)
