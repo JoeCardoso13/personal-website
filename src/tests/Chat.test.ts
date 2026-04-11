@@ -48,6 +48,23 @@ describe('Chat component — initial render', () => {
     expect(screen.getByText('decorators')).toBeInTheDocument();
     expect(screen.getByText(/what do you know about decorators/i)).toBeInTheDocument();
   });
+
+  it('clears rendered messages and persisted history when the clear event fires', async () => {
+    mockedStorage.getHistory.mockReturnValue([
+      { role: 'user', content: 'decorators' },
+      { role: 'assistant', content: 'What do you know about decorators?' },
+    ]);
+
+    render(Chat);
+    expect(screen.getByText('decorators')).toBeInTheDocument();
+
+    window.dispatchEvent(new CustomEvent('brush-up-py:clear-chat'));
+
+    await waitFor(() => {
+      expect(screen.queryByText('decorators')).not.toBeInTheDocument();
+      expect(mockedStorage.clearHistory).toHaveBeenCalled();
+    });
+  });
 });
 
 describe('Chat component — sending messages', () => {

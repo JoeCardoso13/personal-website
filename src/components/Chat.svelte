@@ -3,7 +3,7 @@
   import { marked } from 'marked';
   import { sendMessage } from '../lib/api';
   import type { ApiError, ChatMessage } from '../lib/api';
-  import { getHistory, getUserId, setHistory } from '../lib/storage';
+  import { clearHistory, getHistory, getUserId, setHistory } from '../lib/storage';
 
   let userId = '';
   let input = '';
@@ -11,6 +11,19 @@
   let isLoading = false;
   let errorMessage = '';
   let messagesEl: HTMLDivElement;
+  let textareaEl: HTMLTextAreaElement;
+  const CLEAR_CHAT_EVENT = 'brush-up-py:clear-chat';
+
+  function autoResize(): void {
+    if (!textareaEl) return;
+    textareaEl.style.height = 'auto';
+    textareaEl.style.height = `${textareaEl.scrollHeight}px`;
+  }
+
+  function resetTextarea(): void {
+    if (!textareaEl) return;
+    textareaEl.style.height = 'auto';
+  }
 
   async function scrollToBottom(): Promise<void> {
     await tick();
@@ -19,10 +32,23 @@
     }
   }
 
+  function resetChat(): void {
+    messages = [];
+    input = '';
+    errorMessage = '';
+    clearHistory();
+  }
+
   onMount(() => {
     userId = getUserId();
     messages = getHistory();
     void scrollToBottom();
+
+    window.addEventListener(CLEAR_CHAT_EVENT, resetChat);
+
+    return () => {
+      window.removeEventListener(CLEAR_CHAT_EVENT, resetChat);
+    };
   });
 
   function renderMarkdown(content: string): string {
@@ -54,6 +80,7 @@
     messages = [...messages, { role: 'user', content: question }];
     void scrollToBottom();
     input = '';
+    resetTextarea();
     errorMessage = '';
     isLoading = true;
 
@@ -106,9 +133,11 @@
   <form on:submit|preventDefault={submitMessage}>
     <div class="input-row">
       <textarea
+        bind:this={textareaEl}
         bind:value={input}
         disabled={isLoading}
         on:keydown={handleKeydown}
+        on:input={autoResize}
         placeholder="Ask about Python..."
         rows="1"
       ></textarea>
