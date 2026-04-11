@@ -18,10 +18,12 @@ import Chat from '../components/Chat.svelte';
   :global(.container) {
     height: 100dvh;
     overflow: hidden;
+    padding-top: 1rem;
+    padding-bottom: 0.75rem;
   }
 
   :global(header) {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
   }
 
   :global(footer) {
@@ -60,7 +62,7 @@ import Chat from '../components/Chat.svelte';
 
   @media (max-width: 640px) {
     :global(.container) {
-      padding: 1rem 0.75rem;
+      padding: 0.5rem 0.75rem 0.5rem;
     }
 
     /* Keep nav horizontal on the chat page */
