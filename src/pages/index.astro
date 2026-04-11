@@ -1,6 +1,36 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
+const projects = [
+  {
+    title: 'vispyr',
+    href: 'https://vispyr.com',
+    external: true,
+    description: 'Self-hosted, open-source observability tool combining continuous profiling with traditional telemetry data. Features CLI-driven AWS deployment, pre-configured telemetry data storage, and a custom Grafana dashboard.',
+    tech: ['otel', 'grafana', 'docker', 'aws', 'bash'],
+  },
+  {
+    title: 'brush-up-py',
+    href: '/brush-up-py',
+    external: false,
+    description: 'A Socratic Python tutor powered by AI. Ask any Python question and get guided toward understanding through interactive, conversational teaching.',
+    tech: ['svelte', 'typescript', 'astro', 'claude api'],
+  },
+  {
+    title: 'firefox contributions',
+    href: 'https://bugzilla.mozilla.org/user_profile?user_id=780254',
+    external: true,
+    description: 'Active contributor to improving accessibility features, refactoring CSS on a large scale, removing security sensitive feature flag, fixing PDF rendering, etc.',
+    tech: ['c++', 'javascript', 'accessibility', 'react', 'CSS'],
+  },
+];
+
+const PAGE_SIZE = 2;
+const pages: typeof projects[] = [];
+for (let i = 0; i < projects.length; i += PAGE_SIZE) {
+  pages.push(projects.slice(i, i + PAGE_SIZE));
+}
+
 const allPosts = import.meta.glob('./blog/*.md', { eager: true });
 const recentPosts = Object.entries(allPosts)
   .map(([path, post]: [string, any]) => ({
@@ -32,51 +62,33 @@ const recentPosts = Object.entries(allPosts)
 
   <section class="projects">
     <h2>$ ls projects/</h2>
-    <div class="project-list">
-      <article class="project">
-        <h3><a href="https://vispyr.com" target="_blank">vispyr</a></h3>
-        <p>
-          Self-hosted, open-source observability tool combining continuous profiling with traditional telemetry data. 
-          Features CLI-driven AWS deployment, pre-configured telemetry data storage, and a custom Grafana dashboard.
-        </p>
-        <div class="tech-stack">
-          <span>otel</span>
-          <span>grafana</span>
-          <span>docker</span>
-          <span>aws</span>
-          <span>bash</span>
-        </div>
-      </article>
-
-      <article class="project">
-        <h3><a href="/brush-up-py">brush-up-py</a></h3>
-        <p>
-          A Socratic Python tutor powered by AI. Ask any Python question and get guided toward
-          understanding through interactive, conversational teaching.
-        </p>
-        <div class="tech-stack">
-          <span>svelte</span>
-          <span>typescript</span>
-          <span>astro</span>
-          <span>claude api</span>
-        </div>
-      </article>
-
-      <article class="project">
-        <h3><a href="https://bugzilla.mozilla.org/user_profile?user_id=780254" target="_blank">firefox contributions</a></h3>
-        <p>
-          Active contributor to improving accessibility features, refactoring CSS on a large scale, 
-          removing security sensitive feature flag, fixing PDF rendering, etc.
-        </p>
-        <div class="tech-stack">
-          <span>c++</span>
-          <span>javascript</span>
-          <span>accessibility</span>
-          <span>react</span>
-          <span>CSS</span>
-        </div>
-      </article>
+    <div class="carousel">
+      <div class="carousel-track" data-page-count={pages.length}>
+        {pages.map((group) => (
+          <div class="carousel-page">
+            {group.map((project) => (
+              <article class="project">
+                <h3>
+                  <a href={project.href} {...(project.external ? { target: '_blank' } : {})}>
+                    {project.title}
+                  </a>
+                </h3>
+                <p>{project.description}</p>
+                <div class="tech-stack">
+                  {project.tech.map((t) => <span>{t}</span>)}
+                </div>
+              </article>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
+    {pages.length > 1 && (
+      <div class="carousel-nav">
+        <button class="carousel-arrow carousel-prev" aria-label="Previous projects" disabled>&larr;</button>
+        <button class="carousel-arrow carousel-next" aria-label="Next projects">&rarr;</button>
+      </div>
+    )}
   </section>
 
   <section class="blog-preview">
@@ -134,10 +146,53 @@ const recentPosts = Object.entries(allPosts)
     line-height: 1.8;
   }
 
-  .project-list {
+  .carousel {
+    overflow: hidden;
+  }
+
+  .carousel-track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .carousel-page {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+  }
+
+  .carousel-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .carousel-arrow {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .carousel-arrow:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .carousel-arrow:disabled {
+    opacity: 0.2;
+    cursor: default;
   }
 
   .project {
@@ -220,6 +275,10 @@ const recentPosts = Object.entries(allPosts)
     font-size: 0.95rem;
   }
 
+  :global(html) {
+    overflow-x: hidden;
+  }
+
   @media (max-width: 640px) {
     .ascii-art {
       display: none;
@@ -268,3 +327,28 @@ const recentPosts = Object.entries(allPosts)
     }
   }
 </style>
+
+<script>
+  const track = document.querySelector<HTMLElement>('.carousel-track');
+  const prevBtn = document.querySelector<HTMLButtonElement>('.carousel-prev');
+  const nextBtn = document.querySelector<HTMLButtonElement>('.carousel-next');
+
+  if (track && prevBtn && nextBtn) {
+    const pageCount = Number(track.dataset.pageCount) || 1;
+    let current = 0;
+
+    function update() {
+      track!.style.transform = `translateX(-${current * 100}%)`;
+      prevBtn!.disabled = current === 0;
+      nextBtn!.disabled = current === pageCount - 1;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (current > 0) { current--; update(); }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (current < pageCount - 1) { current++; update(); }
+    });
+  }
+</script>
