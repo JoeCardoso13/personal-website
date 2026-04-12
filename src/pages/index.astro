@@ -44,7 +44,7 @@ const recentPosts = Object.entries(allPosts)
     date: post.frontmatter.date,
   }))
   .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  .slice(0, 5);
+  .slice(0, 4);
 ---
 
 <Layout title="Joe Cardoso - Software Engineer">
