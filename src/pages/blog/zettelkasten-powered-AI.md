@@ -10,10 +10,11 @@ The backend itself is a lightweight tutoring engine. It parses my Markdown notes
 
 The main shortcomings are clear too, and that is part of the value of the project. The current MVP still has five obvious weak spots:
 
-1. It is a single-tutor architecture, so supporting multiple subjects requires a proper multi-tutor refactor.
-2. The retrieval layer is shallow: it relies mostly on note-title matching plus simple fuzzy matching, which is much weaker than a more defensible retrieval design.
-3. Identity and abuse-control are inconsistent: token usage is keyed by a client-provided `user_id`, while rate limiting is keyed by IP.
-4. The testing story is strong at the unit level but still needs more explicit integration coverage for the system as a whole.
-5. Observability is thin, which makes it harder than it should be to explain why the system selected a topic, fell back, or behaved a certain way at runtime.
+1. The retrieval layer is still shallow. It does ground the model in my notes, but the first retrieval step is mostly exact note-title matching plus `difflib` fuzzy matching. That is enough for a proof of concept, but not enough for a retrieval design I would feel comfortable defending as particularly robust or professional.
+2. Identity and abuse-control are inconsistent. Token usage is tracked in SQLite by a client-provided `user_id`, while rate limiting is keyed by IP address. For a low-traffic anonymous MVP, that is acceptable, but it is still a smell: the product does not yet have one coherent story for what a “user” actually is.
+3. The testing story is strong at the unit level but still needs more explicit integration coverage for the system as a whole.
+4. Observability is thin, which makes it harder than it should be to explain why the system selected a topic, fell back, or behaved a certain way at runtime.
+
+Also, a next step I'm positive I'll do, is adding support for Ruby and JavaScript, since the Zettelkasten notes for them were already taken. This is a single-tutor architecture. That was the fastest way to ship, but it means the backend currently assumes one notes corpus, one prompt, and one tutoring flow. Expanding it into Python, JavaScript, and Ruby without multiplying Fly.io costs will require turning it into one shared tutor engine serving multiple corpora inside the same deployed app.
 
 That combination is exactly why I think the project is worth writing about. It demonstrates that I can take an idea from concept to deployment, but it also gives me a concrete engineering diary of what the first version got right, what it deliberately faked, and what the next round of work should improve.
