@@ -8,12 +8,10 @@ From an engineering point of view, the intent at first was less about building a
 
 At the heart of this app lies the retrieval mechanism. To start things simple, I took the fateful design decision of using a graph based retrieval. The app parses my Markdown notes into a graph, tries to match a user question to a note, gathers nearby linked notes, injects that context into the system prompt, and sends the request to the model. That proved to work extraordinarily well. The system is live, it answers questions, and the overall architecture is clean enough that I can now evolve it into something broader, including JavaScript and Ruby versions built on other note vaults.
 
-The main shortcomings are clear too, and that is part of the value of the project. The current MVP still has five obvious weak spots:
+The current MVP still has two obvious weak spots:
 
 1. The retrieval layer is still shallow. It does ground the model in my notes, but the first retrieval step is mostly exact note-title matching plus `difflib` fuzzy matching. That is enough for a proof of concept, but not enough for a retrieval design I would feel comfortable defending as particularly robust or professional.
 2. Identity and abuse-control are inconsistent. Token usage is tracked in SQLite by a client-provided `user_id`, while rate limiting is keyed by IP address. For a low-traffic anonymous MVP, that is acceptable, but it is still a smell: the product does not yet have one coherent story for what a “user” actually is.
-3. The testing story is strong at the unit level but still needs more explicit integration coverage for the system as a whole.
-4. Observability is thin, which makes it harder than it should be to explain why the system selected a topic, fell back, or behaved a certain way at runtime.
 
 Also, a next step I'm positive I'll do, is adding support for Ruby and JavaScript, since the Zettelkasten notes for them were already taken. This is a single-tutor architecture. That was the fastest way to ship, but it means the backend currently assumes one notes corpus, one prompt, and one tutoring flow. Expanding it into Python, JavaScript, and Ruby without multiplying Fly.io costs will require turning it into one shared tutor engine serving multiple corpora inside the same deployed app.
 
@@ -80,3 +78,30 @@ The second question — "what's the deal with subclasses and superclasses?" — 
 The third question was meant to be a safer phrasing: "how does inheritance work?" The logs showed `Implicit coercion` at score 0.091. That was genuinely surprising. Locally, a test for this exact query was passing — but the test had been checking the top-3 results while `ask()` only uses the top-1. `Inheritance` was sitting at rank 3, invisible to the actual code path. The test was lying. The log caught it.
 
 That last one is the most honest summary of what this round of work was really for. The retrieval is better than it was. The tests are more honest than they were. And the observability means that when the system fails in production — and it will fail — there is now enough signal to understand why.
+
+---
+
+## The Third Round: Making Identity Honest
+
+The original abuse-control story had two mechanisms that did not know about each other. Token budgets were tracked in SQLite, keyed by a `user_id` that the frontend generated and sent in the request body. Rate limiting was handled by `slowapi`, keyed by client IP. They used different identity signals, answered different questions, and had been bolted together without anyone asking whether they needed to coexist.
+
+The guidance document I started from called this an "identity problem." It suggested comparing approaches: server-issued session tokens, IP hashing, stable frontend UUIDs. All reasonable things to evaluate. But the framing was slightly off, and it took a few exchanges to get to the right question.
+
+The right question was not "what is a better identity model?" It was "what is this system actually trying to defend against?"
+
+For a public, anonymous Python tutor on a personal portfolio site, the answer is exactly one thing: someone burning through a prepaid Anthropic API balance that I cannot replenish automatically. That is the whole threat model. Not DDoS. Not credential stuffing. Not session hijacking. Someone — probably not even maliciously — hammers the endpoint and I wake up to an empty account.
+
+Once the threat is stated that plainly, the existing architecture looks very different. Rate limiting at 10 requests per minute per IP is solving a problem that this product does not have. If someone is genuinely trying to exhaust my API budget, rotating their IP defeats the rate limiter anyway. And if they are not trying to do that — if they are just a curious visitor — a rate limiter is a bad experience for no gain. The mechanism was real code, with real tests, adding real operational surface area, and it was defending against a threat that was not there.
+
+The SQLite budget system was the right tool for the right job, just implemented in a way that did not quite make sense. The idea was: each user gets a token ceiling, and once they hit it they stop. That is a sensible answer to the one threat that matters. The problem was the persistence layer. SQLite is a durable store. But the identity keying into it — a UUID stored in the browser's localStorage — is not durable at all. Clear your browser storage, reload the page, and you have a fresh identity with a fresh budget. The database was faithfully tracking usage for an identity that could disappear at any moment. It was persistence in service of something ephemeral.
+
+The fix follows directly from the diagnosis. The identity is ephemeral, so the budget should be too. Drop SQLite entirely, replace it with a plain Python dict on the application state. When the server restarts, budgets reset. When a user clears their localStorage, they get a new UUID and a fresh budget. Both of these are fine. The stakes do not require anything stronger. What matters is that one active session cannot exhaust the balance before someone else gets to use it — and a per-UUID in-memory ceiling handles that correctly and honestly.
+
+The diff was mostly deletions. `db.py` went away entirely — about 90 lines of SQLite setup, connection management, and row-factory logic that existed solely to serve a use case that could be covered by a 30-line module with no dependencies. `slowapi` came out of the dependencies. The `/api/usage/{user_id}` endpoint was removed — it had never been called by the frontend, confirmed by reading the actual client code. What remained was a small `budget.py` with three functions, a plain dict as state, and a lifespan that no longer needed to open or close a database connection.
+
+The budget defaults were also corrected. The original values — 2 million input tokens and 500,000 output tokens per user — were larger than the entire prepaid balance. A single user hitting the ceiling would cost more than the total account credit. The new values, 250,000 input and 60,000 output, are calibrated against actual Sonnet pricing: a user who burns through both limits costs roughly $1.65. That is a defensible worst case for a portfolio product, and it leaves room for multiple people to use the thing before the balance is gone.
+
+What I find most interesting about this round is not the code. The code is small. What is interesting is the step where the framing had to change. The guidance document diagnosed the right symptom — inconsistency between two identity schemes — but the natural next move was to design a better identity system. That would have produced a more sophisticated answer to a question the product was not actually asking. The better move was to stop and ask what the product actually needed, and then be willing to delete things that were answering the wrong question.
+
+That is a different engineering judgment than making something more robust. It is the judgment to make something more honest, even when honesty means less code.
+
