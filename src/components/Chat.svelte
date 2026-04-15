@@ -108,7 +108,7 @@
   }
 </script>
 
-<section class="chat" aria-label="Python study chat">
+<section class="chat" class:empty={messages.length === 0} aria-label="Python study chat">
   <div bind:this={messagesEl} class="messages" aria-live="polite">
     {#each messages as message}
       <article class={`message ${message.role}`}>
@@ -159,6 +159,14 @@
     flex-direction: column;
     min-height: 0;
     gap: 0.75rem;
+  }
+
+  .empty {
+    justify-content: center;
+  }
+
+  .empty .messages {
+    display: none;
   }
 
   .messages {
@@ -290,7 +298,7 @@
     align-items: flex-end;
     gap: 0.5rem;
     background: #111;
-    border: 1px solid #2a2a2a;
+    border: 1px solid #333;
     border-radius: 10px;
     padding: 0.5rem 0.5rem 0.5rem 0.85rem;
     transition: border-color 0.15s;
@@ -320,7 +328,7 @@
   }
 
   textarea::placeholder {
-    color: #555;
+    color: #666;
   }
 
   button {
