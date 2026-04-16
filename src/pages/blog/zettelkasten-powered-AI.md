@@ -1,87 +1,49 @@
 # Building a Zettelkasten-Powered AI Tutor
 
-So I recently had a Take Home exercise, as part of my Job Hunt, that was to be done in Python, fully closed book. Naturally, I leaned on my agents to help me brush up my Python skills. It helped that I had already created a good repository of markdown files, consisting of atomic notes, using the Zettelkasten method, in an Obsidian vault. So I just threw my agent in there, asked to surface links between concepts and leveraged the Zettelkasten structure already there. I also used the prompting I've very fond of, ensuring a very interactive study session. It worked better than I anticipated, and I decided to host a remote one on my website.
+I recently had a Take Home exercise in Python, fully closed book. Naturally, I leaned on my agents to help me brush up my Python skills. I already had an Obsidian Vault of notes taken in Zettelkasten style: atomic and cross-referencing. So I threw my agent in there. It worked better than I anticipated, why not host it on my website? The result was a working MVP plugged into my website: a static Astro frontend with a Svelte page talking to a Python backend deployed separately on Fly.io.
 
-I built and shipped a small AI tutoring product around the idea of turning my own Zettelkasten notes into a live teaching interface. The result was a working MVP now plugged into my website: a static Astro frontend with a Svelte page talking to a Python backend deployed separately on Fly.io.
+## Shipping the MVP in 3 days
 
-The work on the frontend involved creating the new chat page, which meant adding Svelte to the stack, and adding pagination to the project cards on the frontpage. While I was at it, I paginated the blog posts page as well, since that was a long pinned todo item.
+The intent at first was about getting a full vertical slice live: notes on disk, retrieval logic, prompt construction, API surface, deployment, and a frontend that made the whole thing feel like a coherent experience.
 
-From an engineering point of view, the intent at first was less about building a polished product and more about getting a full vertical slice live: notes on disk, retrieval logic, prompt construction, API surface, deployment, and a frontend that made the whole thing feel like a coherent experience. This is a software product deployed, reachable from my site, and built around constraints that actual software has: cost sensitivity, routing, cross-origin requests, token accounting, and the awkward compromises that come with shipping an MVP before every architectural question is fully resolved.
+At the heart of this app lies the retrieval mechanism. To start things simple, I took the fateful design decision of using a graph based system for leveraging my markdown notes. The app parses them into a graph (technology?), tries to match a user question to a note (fuzzy finding title of markdowns), then gathers nearby linked notes (how, same tech?). It injects that context into the system prompt, and sends the request to the model. This went live in 2-3 days, working fine.
 
-At the heart of this app lies the retrieval mechanism. To start things simple, I took the fateful design decision of using a graph based retrieval. The app parses my Markdown notes into a graph, tries to match a user question to a note, gathers nearby linked notes, injects that context into the system prompt, and sends the request to the model. That proved to work extraordinarily well. The system is live, it answers questions, and the overall architecture is clean enough that I can now evolve it into something broader, including JavaScript and Ruby versions built on other note vaults.
+But building things fast with agents, even using the [TDD agent skill that I built](), does come with tradeoffs. After inspecting the system under the hood, it was clear 2 major components were quite substandard - I'd even go as far to say they were mostly smoke-and-mirrors:
 
-The current MVP still has two obvious weak spots:
+1. The retrieval layer: It did ground the model in my notes, but only at a very rudimentary level. The first retrieval step was just exact note-title matching plus `difflib` fuzzy matching - for matching user query vs Zettelkasten notes. Rarely effective in providing the model with useful context. The subsequent graph expansion step doesn't help when no node was found.
+2. The user tracking system: Token usage was tracked by storing a `user_id` in a SQLite database. But this `user_id` was browser-session based. Meanwhile rate limiting was keyed by IP address. Now this is just a mess. For a portfolio website, I don't think I need rate-limiting at this time. And the token consumption has to be tracked but faking state persistence by storing session data on a database is definitely **not** the way to go.
 
-1. The retrieval layer is still shallow. It does ground the model in my notes, but the first retrieval step is mostly exact note-title matching plus `difflib` fuzzy matching. That is enough for a proof of concept, but not enough for a retrieval design I would feel comfortable defending as particularly robust or professional.
-2. Identity and abuse-control are inconsistent. Token usage is tracked in SQLite by a client-provided `user_id`, while rate limiting is keyed by IP address. For a low-traffic anonymous MVP, that is acceptable, but it is still a smell: the product does not yet have one coherent story for what a “user” actually is.
+Agents don't help only with shipping an MVP - if aptly used they can augment virtually any type of intellectual work. So they also contributed tackling these 2 issues.
 
-Also, a next step I'm positive I'll do, is adding support for Ruby and JavaScript, since the Zettelkasten notes for them were already taken. This is a single-tutor architecture. That was the fastest way to ship, but it means the backend currently assumes one notes corpus, one prompt, and one tutoring flow. Expanding it into Python, JavaScript, and Ruby without multiplying Fly.io costs will require turning it into one shared tutor engine serving multiple corpora inside the same deployed app.
-
-That combination is exactly why I think the project is worth writing about. It demonstrates that I can take an idea from concept to deployment, but it also gives me a concrete engineering diary of what the first version got right, what it deliberately faked, and what the next round of work should improve.
-
----
-
-## The Second Round: Making the Retrieval Real
-
-Shipping the MVP was the easy part in one sense: the hard tradeoffs are invisible when the system is untested under real queries. The moment I started using it seriously, shortcomings 1, 3, and 4 from the list above became impossible to ignore. The retrieval was shallow. The tests did not cover the system as a whole. And when something went wrong at runtime, there was no signal — just a response that may or may not have been grounded in my notes at all.
-
-I came back to those three together, in that order, because they are tightly coupled. Better retrieval is only trustworthy if you can test it. Tests for retrieval quality are only useful if you can also observe what the system actually does in production. You cannot do one of these properly without the other two.
+## Making the Retrieval Real
 
 ### Replacing Fuzzy Matching with TF-IDF
 
-The original retrieval step was `difflib` fuzzy matching against note titles. It worked well enough to demo, but it was shallow in a specific way: it could only retrieve notes whose titles overlapped with the user's phrasing. A question like "how do I wrap a function to modify its behavior" has almost no title overlap with the `Decorator` note, so the system would miss it. The Zettelkasten was technically being used, but the selection was so brittle that calling it grounded was generous.
+The original retrieval step was using `difflib` fuzzy matching to compare the user's question against note titles. It could only retrieve notes whose titles overlapped with the user's phrasing. A question like "how do I wrap a function to modify its behavior" has almost no title overlap with the `Decorator` note, so the system would miss it.
 
-The replacement is a small TF-IDF index built at startup over the full note content — title plus body, with wikilink brackets stripped so link text is searchable. The title is repeated three times in the indexed text to create a bounded but meaningful title boost, so a query like "what is a for loop" still finds `For loop` without drowning out notes where the topic is covered in the body. IDF is computed over the full 127-note corpus, which means common Python words like "function" or "return" contribute less than vocabulary that actually distinguishes one note from another.
+The replacement is a small TF-IDF (term frequency-inverse document frequency). It works by using an index of vectorized notes (each Zettelkasten note becomes a vector) and ranking the result of a cosine similarity search against the user query. For a more detailed explanation see below (1). The wikilink brackets were stripped so link text were searchable. The title was repeated three times in the indexed text to create a bounded but meaningful title boost.
 
-The design is deliberately minimal. There is no stemming, no embeddings, no external search library. Everything is standard library math: term frequency, inverse document frequency, cosine similarity. That is partly a cost decision and partly a correctness one — a system this size does not need a vector database, and keeping the retrieval logic in a single file with no dependencies makes it much easier to test, understand, and improve incrementally.
+The TF-IDF is used underneath the pre-existing graph layer. It works on the retrieval, or similarity search, per se, while the graph leverages the wikilinks from the Zettelkasten notes to expand that. This solution was chosen over a vector database with semantic retrieval due to being litghter and simpler. Chunking, embedding, and storing tokenized vectors would be overkill, and it would likely nudge up the costs of the fly.io deployment.
 
-### Writing Tests That Can Actually Fail
+### Writing Integration Tests That Can Actually Fail
 
-The testing strategy for this round followed red-green TDD. Before writing any retrieval code, I wrote tests that asserted what I wanted the retrieval to do: specific queries should retrieve specific notes, scores should clear a confidence threshold, and the system prompt passed to Claude should actually contain the right note content. All of them failed first, which is the point. A test that passes before the code exists is not a test, it is a coincidence.
+It's worth describing in more detail the diverse-phrasing tests. I wrote multiple differently-phrased questions that should all ground on the same note. "How does a for loop work", "iterating over a list with a loop", "what is the syntax for looping through a sequence" — all three should retrieve `For loop`. These tests are more demanding than a single exact match, and some of them fail.
 
-One category worth describing in more detail is the diverse-phrasing tests. For any topic I cared about, I wrote multiple differently-phrased questions that should all ground on the same note. "How does a for loop work", "iterating over a list with a loop", "what is the syntax for looping through a sequence" — all three should retrieve `For loop`. These tests are more demanding than a single exact match, and some of them fail.
+The failures are marked `xfail` rather than deleted, which is a deliberate choice. An `xfail` in pytest is a documented known weakness: the test describes something the system should do, is expected to fail for now, and will automatically turn into an unexpected pass the moment retrieval improves enough to handle it. It is a better artifact than a comment.
 
-The failures are marked `xfail` rather than deleted, which is a deliberate choice. An `xfail` in pytest is a documented known weakness: the test describes something the system should do, is expected to fail for now, and will automatically turn into an unexpected pass the moment retrieval improves enough to handle it. It is a better artifact than a comment. It runs on every CI pass, and if it ever starts passing, the suite tells you.
+Let's not forget the markdown notes grounding this retrieval are far from neat. Those are messy texts, haphazardly written while I skimmed through some Python basics lessons. They can even contain mistakes. But that certainly reflects how other data is represented out there, laying dormant waiting for some apt engineer figure out a clever system to feed them to AI.
 
-The tests that xfail cluster around two root causes. First, notes with very thin prose are under-retrievable. The `Decorator` note is a single sentence: "They are Methods that modify other Methods." The word "decorator" does not appear in it. A query phrased as "how do decorators work" shares almost no vocabulary with the note body and loses to notes that happen to have more word overlap. Title boost helps for direct queries but cannot rescue indirect ones. Second, closely-named notes compete against each other in ways that are hard to resolve without richer content. "What is a class?" retrieves `Class method` rather than `Class` because `Class method` has more occurrences of relevant tokens and the margin is narrow.
+### Catching Bugs With End-to-End Tests
 
-### End-to-End Tests Through the HTTP Layer
+I added a second layer of tests that go through the HTTP stack using FastAPI's `TestClient` with the real 127-note corpus. The Anthropic client is mocked — these tests are about retrieval grounding, not about what Claude says — but everything else is real. The key assertion in these tests is does the `system` argument that gets passed to the Claude API call actually contain relevant content from the notes?
 
-The integration tests operate directly against the TF-IDF index. They are fast and useful, but they do not exercise the actual request path: FastAPI validation, middleware, the lifespan-built state, the system prompt construction, the response shape. I added a second layer of tests that go through the HTTP stack using FastAPI's `TestClient` with the real 127-note corpus. The Anthropic client is mocked — these tests are about retrieval grounding, not about what Claude says — but everything else is real.
-
-The key assertion in these tests is not just "did the endpoint return 200". It is: does the `system` argument that gets passed to the Claude API call actually contain content from the expected note? That is the chain we care about. A test that only checks the HTTP response shape is not testing whether the Zettelkasten is being leveraged at all.
-
-These tests also caught something the integration tests missed. One integration test checked whether `Inheritance` appeared in the top 3 retrieval results for "how does inheritance work" — and it did, in third place. But `ask()` uses `k=1`: it takes only the top result. Third place never reaches the system prompt. The test was passing for the wrong reason. The e2e test, which checked the actual system prompt content, caught the bug immediately.
+These e2e tests caught something the integration tests missed. One integration test checked whether `Inheritance` appeared in the top 3 retrieval results for "how does inheritance work" — and it did, in third place, so the test passed. But the prompt building code was taking only the top result. Third place never reached the system prompt. So the same query was passing the integration test but failing the e2e test. 
 
 ### Adding Observability
 
-The last piece was logging. Before this round, the only runtime signal was the HTTP status code and response latency. There was no way to know which note the system had retrieved, what score it had received, or whether the retrieval had fallen back entirely.
+I finally added logging and re-ran some of the same queries from e2e and integration testings with `curl` commands, as a sort of ultimate deployed e2e testing. The logging emited two lines per request. Showing what was **going** to Claude API and what was **coming** from it. I deployed, opened the frontend on my browser, and watched `fly logs` in a terminal.
 
-The logging added in this round emits two lines per request. The first comes from the agent layer when retrieval runs:
-
-```
-retrieval topic='Decorator' score=0.309 neighbors=6 question='What is this decorator thing?'
-```
-
-The second comes from the API layer after the response is returned:
-
-```
-chat user=b8861b07 q_len=63 tokens=3122+60 2.5s topic='Decorator' score=0.309 neighbors=6
-```
-
-This gives enough signal to answer the question I actually cared about: for a given user question, did the system ground the tutor in the right note? The score is interpretable — above 0.10 is confident, below 0.10 means the match is marginal and the grounding may be unreliable. The topic is auditable against the question in plain text.
-
-### What Production Actually Showed
-
-I deployed, opened the frontend on my browser, and watched `fly logs` in a terminal. The first question — a natural phrasing about decorators — retrieved `Decorator` at score 0.309 with 6 neighbors. That is a confident grounding, and the note content was in the system prompt. The retrieval worked.
-
-The second question — "what's the deal with subclasses and superclasses?" — retrieved `Self` at score 0.094. The score alone flags it: below the confidence threshold, wrong note. This is exactly the indirect-phrasing failure the xfails document. It is not surprising, but seeing it in production against a real question I actually typed makes it concrete in a way that a test output does not.
-
-The third question was meant to be a safer phrasing: "how does inheritance work?" The logs showed `Implicit coercion` at score 0.091. That was genuinely surprising. Locally, a test for this exact query was passing — but the test had been checking the top-3 results while `ask()` only uses the top-1. `Inheritance` was sitting at rank 3, invisible to the actual code path. The test was lying. The log caught it.
-
-That last one is the most honest summary of what this round of work was really for. The retrieval is better than it was. The tests are more honest than they were. And the observability means that when the system fails in production — and it will fail — there is now enough signal to understand why.
-
----
+These confirmed everything the e2e tests had shown. They also illustrated the how critical is to be aware of the responsibility of the developer when building on top of an API and ending user data to it.
 
 ## The Third Round: Making Identity Honest
 
@@ -107,3 +69,19 @@ What I find most interesting about this round is not the code. The code is small
 
 That is a different engineering judgment than making something more robust. It is the judgment to make something more honest, even when honesty means less code.
 
+---
+
+## Conclusion & Next Step: AI helps prototype + hone & Amplify w/ Ruby and JavaScript
+
+
+Also, a next step I'm positive I'll do, is adding support for Ruby and JavaScript, since the Zettelkasten notes for them were already taken. This is a single-tutor architecture. That was the fastest way to ship, but it means the backend currently assumes one notes corpus, one prompt, and one tutoring flow. Expanding it into Python, JavaScript, and Ruby without multiplying Fly.io costs will require turning it into one shared tutor engine serving multiple corpora inside the same deployed app.
+
+---
+
+(1) The replacement is a small TF-IDF index — term frequency-inverse document frequency. At a high level, TF-IDF turns each note into a weighted word vector. First, it builds a shared vocabulary from the full note corpus. Then, for each note, it measures how often each vocabulary term appears in that note. That is the term-frequency part. It also computes how distinctive each term is across the corpus by checking how many notes contain it. That is the inverse-document-frequency part. Common words are not manually removed; they just matter less because they appear everywhere.
+
+Multiplying those two signals produces one TF-IDF vector per note. A user query is treated like a tiny document and mapped into the same vector space, using the same vocabulary and IDF weights. The query vector is then compared against every note vector with cosine similarity, and the highest-scoring note becomes the retrieval starting point.
+
+The graph still exists. TF-IDF replaced the brittle title-matching step, but once it selects a note, the app still uses the note graph to gather linked neighbors and inject that surrounding context into the system prompt. On the implementation side, wikilink brackets were stripped so linked terms remained searchable, and the title was repeated three times in the indexed text to create a bounded title boost.
+
+This was intentionally lighter than semantic retrieval with embeddings or a vector database. A system this size does not need that extra infrastructure, and keeping retrieval dependency-free made it easier to test, understand, and deploy cheaply on Fly.io.
