@@ -1,4 +1,12 @@
-# Building a Zettelkasten-Powered AI Tutor
+---
+layout: ../../layouts/BlogPost.astro
+title: "Claude Code Tidbits: building a Zettelkasten powered AI tutor"
+date: "March 26, 2026"
+description: "AI agentic engineering at its best, build and ship fast, then iterate"
+banner: /claude-tidbits-logo.svg
+---
+
+# Why not?
 
 I recently had a Take Home exercise in Python, fully closed book. Naturally, I leaned on my agents to help me brush up my Python skills. I already had an Obsidian Vault of notes taken in Zettelkasten style: atomic and cross-referencing. So I threw my agent in there. It worked better than I anticipated, why not host it on my website? The result was a working MVP plugged into my website: a static Astro frontend with a Svelte page talking to a Python backend deployed separately on Fly.io.
 
