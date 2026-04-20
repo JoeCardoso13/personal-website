@@ -12,7 +12,7 @@ In the first [Claude Code Tidbits](/blog/claude-tidbits-1), I looked at skills. 
 
 [Plugins](https://claude.com/plugins) are Anthropic's opinionated package format that can contain skills, and in simple cases they may look like a [folder of skills with extra metadata](https://code.claude.com/docs/en/plugins-reference). But the important distinction is that a plugin usually contains a bundle of assumptions about the host environment.
 
-In this post I'll give an example of how a plugin workflow can work cleanly in **Claude Code** but behave differently in **Codex**, not because the model could not read or interpret the Markdown, but because the surrounding **harness** was different.
+In this post I'll give an example of how a plugin workflow can work cleanly in **Claude Code** but behave differently in **Codex**, not because the model could not read or interpret the Markdown, but because the surrounding [harness](https://martinfowler.com/articles/harness-engineering.html) was different.
 
 ## What a Plugin Adds
 
@@ -44,13 +44,26 @@ First, Claude Code needs to know about the marketplace:
 
 A marketplace is a catalog. In this case, the catalog is the [Context Engineering Kit](https://cek.neolab.finance/) curated repository, and its  file lists several plugins, including `tdd`.
 
+Your global Claude settings know about the marketplace itself here:
+
+```
+  "extraKnownMarketplaces": {
+    "context-engineering-kit": {
+      "source": {
+        "source": "github",
+        "repo": "NeoLabHQ/context-engineering-kit"
+      }
+    }
+  }
+```
+
 Then you install one plugin from that catalog:
 
 ```bash
 /plugin install tdd@NeoLabHQ/context-engineering-kit
 ```
 
-Throughout the CLI propts you choose how to install, e.g. if local to project or globally available. I chose the former and this popped up in my `.claude/settings.local.json`:
+Throughout the CLI propts you choose how to install, e.g. if local to project or globally available. I chose the former and this popped up in my `./.claude/settings.local.json`:
 
 ```
   "enabledPlugins": {
@@ -58,10 +71,22 @@ Throughout the CLI propts you choose how to install, e.g. if local to project or
   }
 ```
 
-For the TDD plugin, the source directory currently looks roughly like this:
+Claude keeps two related copies/records. The marketplace clone is here:
+
+```
+~/.claude/plugins/marketplaces/context-engineering-kit/plugins/tdd
+```
+
+The installed plugin cache is here:
+
+```
+/home/joe/.claude/plugins/cache/context-engineering-kit/tdd/1.1.0
+```
+
+The installed plugin cache is the clearest place to inspect what got installed:
 
 ```text
-plugins/tdd/
+~/.claude/plugins/cache/context-engineering-kit/tdd/1.1.0
 ├── .claude-plugin/
 │   └── plugin.json
 ├── README.md
@@ -88,7 +113,7 @@ But inside a plugin named `tdd`, you use the plugin namespace:
 /tdd:write-tests
 ```
 
-This plugin has three skills:
+This plugin has three skills (although it calls the last 2 as 'slash commands'):
 
 - `tdd:test-driven-development`
 - `tdd:write-tests`
@@ -96,8 +121,8 @@ This plugin has three skills:
 
 The first one is the core philosophy, and arguably the most important: no production code without a failing test first. The other two are about operational workflows for adding missing tests and fixing failing tests.
 
-All these operational workflows were written for Claude Code's world. For instance, when making complex code changes, the instructions tell the agent to dispatch specialized subagents: reviewers to identify coverage gaps, developers to write tests, and reviewers again to verify the result. But that doesn't work for a Codex, it can only dispatch subagents from a user's specific prompting.
-
 ## Go Explore
 
-Given that most plugins don't go much further beyond simply packaging a bunch of skills, it bears to mind the cognition that the distance between agents skills, as an open spec, and plugins, a Claude specific standard, resonates with how the industry converges and diverges upon conventions in this new agentic AI Cambrian explosion.
+I have used the `test-driven-development` skill and it worked like a charm! It helped me expand my [Brush Up Python app](https://www.joecardoso.dev/brush-up-py) into a [Brush Up Ruby app](https://www.joecardoso.dev/brush-up-rb) and [Brush Up JavaScript app](https://www.joecardoso.dev/brush-up-js), using the same backend. Since I had the notes written for the other 2 topics in the same Zettelkasten format already, I just had to adapt the backend and my app multiplied to 3! The TDD skill helped my agents be very intentional about the implementation, stay on track, and subdivide the problem into bitesized chunks.
+
+It's important to note that the TDD plugin assumes a particular control system around the model. Since [plugins](https://code.claude.com/docs/en/plugins) are not an open spec in the same way skills are, they carry Claude Code's design opinions with them. For example, when making complex code changes, the instructions tell the agent to **dispatch specialized subagents**. That does not transfer one-to-one to Codex, where subagents can only be dispatched from a user's explicit prompting. This is a solid example of [harness](https://martinfowler.com/articles/harness-engineering.html) coming into play.
