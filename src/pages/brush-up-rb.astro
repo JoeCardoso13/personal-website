@@ -3,11 +3,11 @@ import Layout from '../layouts/Layout.astro';
 import Chat from '../components/Chat.svelte';
 ---
 
-<Layout title="brush-up-py - Python Tutor" description="A Python tutor powered by AI">
+<Layout title="brush-up-rb - Ruby Tutor" description="A Ruby tutor powered by AI">
   <section class="chat-page">
     <div class="chat-intro">
       <div class="chat-intro-row">
-        <h2>$ python brush-up-py</h2>
+        <h2>$ ruby brush-up-rb</h2>
         <button id="clear-chat-btn" class="reset-btn" aria-label="Clear chat" title="Clear chat" type="button">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="1 4 1 10 7 10"></polyline>
@@ -15,9 +15,9 @@ import Chat from '../components/Chat.svelte';
           </svg>
         </button>
       </div>
-      <p>A Socratic Python tutor powered by my Zettelkasten notes.</p>
+      <p>A Socratic Ruby tutor powered by my Zettelkasten notes.</p>
     </div>
-    <Chat tutor="python" client:load />
+    <Chat tutor="ruby" client:load />
   </section>
 </Layout>
 
