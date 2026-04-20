@@ -2,8 +2,19 @@
   import { onMount, tick } from 'svelte';
   import { marked } from 'marked';
   import { sendMessage } from '../lib/api';
-  import type { ApiError, ChatMessage } from '../lib/api';
+  import type { ApiError, ChatMessage, Tutor } from '../lib/api';
   import { clearHistory, getHistory, getUserId, setHistory } from '../lib/storage';
+
+  export let tutor: Tutor;
+
+  const TUTOR_LABELS: Record<Tutor, string> = {
+    python: 'Python',
+    ruby: 'Ruby',
+    javascript: 'JavaScript',
+  };
+
+  $: tutorLabel = TUTOR_LABELS[tutor];
+  $: placeholder = `Ask about ${tutorLabel}...`;
 
   let userId = '';
   let input = '';
@@ -12,7 +23,7 @@
   let errorMessage = '';
   let messagesEl: HTMLDivElement;
   let textareaEl: HTMLTextAreaElement;
-  const CLEAR_CHAT_EVENT = 'brush-up-py:clear-chat';
+  const CLEAR_CHAT_EVENT = 'brush-up:clear-chat';
 
   function autoResize(): void {
     if (!textareaEl) return;
@@ -36,12 +47,12 @@
     messages = [];
     input = '';
     errorMessage = '';
-    clearHistory();
+    clearHistory(tutor);
   }
 
   onMount(() => {
     userId = getUserId();
-    messages = getHistory();
+    messages = getHistory(tutor);
     void scrollToBottom();
 
     window.addEventListener(CLEAR_CHAT_EVENT, resetChat);
@@ -87,12 +98,13 @@
     try {
       const response = await sendMessage({
         user_id: userId,
+        tutor,
         question,
         conversation_history: history,
       });
       messages = response.history;
       void scrollToBottom();
-      setHistory(response.history);
+      setHistory(tutor, response.history);
     } catch (error) {
       errorMessage = getErrorMessage(error);
     } finally {
@@ -108,7 +120,7 @@
   }
 </script>
 
-<section class="chat" class:empty={messages.length === 0} aria-label="Python study chat">
+<section class="chat" class:empty={messages.length === 0} aria-label="{tutorLabel} study chat">
   <div bind:this={messagesEl} class="messages" aria-live="polite">
     {#each messages as message}
       <article class={`message ${message.role}`}>
@@ -138,7 +150,7 @@
         disabled={isLoading}
         on:keydown={handleKeydown}
         on:input={autoResize}
-        placeholder="Ask about Python..."
+        placeholder={placeholder}
         rows="1"
       ></textarea>
       <button type="submit" disabled={isLoading || !input.trim()} aria-label="Send">

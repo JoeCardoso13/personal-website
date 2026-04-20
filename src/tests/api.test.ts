@@ -11,6 +11,7 @@ beforeEach(() => {
 describe('sendMessage', () => {
   const request: ChatRequest = {
     user_id: 'test-user-123',
+    tutor: 'python',
     question: 'What are decorators?',
     conversation_history: [],
   };
@@ -59,6 +60,7 @@ describe('sendMessage', () => {
   it('includes conversation history when provided', async () => {
     const requestWithHistory: ChatRequest = {
       user_id: 'test-user-123',
+      tutor: 'python',
       question: 'Can you give me an example?',
       conversation_history: [
         { role: 'user', content: 'decorators' },
@@ -102,6 +104,36 @@ describe('sendMessage', () => {
     await expect(sendMessage(request)).rejects.toMatchObject({
       code: 'rate_limited',
       message: 'Too many requests. Please slow down.',
+    });
+  });
+
+  it('sends the tutor value in the request body', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ response: '', history: [], usage: { input_tokens: 0, output_tokens: 0 } }), { status: 200 }),
+    );
+
+    await sendMessage({
+      user_id: 'test-user-123',
+      tutor: 'ruby',
+      question: 'What are blocks?',
+      conversation_history: [],
+    });
+
+    const sentBody = JSON.parse(fetchSpy.mock.calls[0][1]!.body as string);
+    expect(sentBody.tutor).toBe('ruby');
+  });
+
+  it('throws an ApiError with "tutor_unavailable" on 503 tutor_unavailable', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({ error: 'tutor_unavailable', detail: 'This tutor is temporarily unavailable.' }),
+        { status: 503 },
+      ),
+    );
+
+    await expect(sendMessage(request)).rejects.toMatchObject({
+      code: 'tutor_unavailable',
+      message: 'This tutor is temporarily unavailable.',
     });
   });
 

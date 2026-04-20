@@ -3,8 +3,11 @@ export interface ChatMessage {
   content: string;
 }
 
+export type Tutor = 'python' | 'ruby' | 'javascript';
+
 export interface ChatRequest {
   user_id: string;
+  tutor: Tutor;
   question: string;
   conversation_history: ChatMessage[];
 }
@@ -16,7 +19,7 @@ export interface ChatResponse {
 }
 
 export interface ApiError {
-  code: 'budget_exceeded' | 'rate_limited' | 'overloaded' | 'api_error' | 'validation_error' | 'network_error' | 'unknown';
+  code: 'budget_exceeded' | 'rate_limited' | 'overloaded' | 'tutor_unavailable' | 'api_error' | 'validation_error' | 'network_error' | 'unknown';
   message: string;
 }
 
@@ -53,6 +56,9 @@ async function buildApiError(response: Response): Promise<ApiError> {
   }
 
   if (response.status === 503) {
+    if (payload.error === 'tutor_unavailable') {
+      return toApiError('tutor_unavailable', detailToMessage(payload.detail, 'This tutor is temporarily unavailable.'));
+    }
     return toApiError('overloaded', detailToMessage(payload.detail, 'The AI service is temporarily busy.'));
   }
 
