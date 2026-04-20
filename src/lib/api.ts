@@ -23,7 +23,7 @@ export interface ApiError {
   message: string;
 }
 
-const API_BASE = 'https://brush-up-py.fly.dev';
+const API_BASE = import.meta.env.PUBLIC_API_BASE ?? 'https://brush-up-py.fly.dev';
 
 type ErrorPayload = {
   error?: ApiError['code'];

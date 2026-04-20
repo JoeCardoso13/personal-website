@@ -198,4 +198,19 @@ describe('sendMessage', () => {
       message: 'Failed to fetch',
     });
   });
+
+  it('uses PUBLIC_API_BASE when set', async () => {
+    vi.stubEnv('PUBLIC_API_BASE', 'http://localhost:8080');
+    vi.resetModules();
+    const { sendMessage: sendMessageReloaded } = await import('../lib/api');
+
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ response: '', history: [], usage: { input_tokens: 0, output_tokens: 0 } }), { status: 200 }),
+    );
+
+    await sendMessageReloaded(request);
+
+    expect(fetchSpy).toHaveBeenCalledWith('http://localhost:8080/api/chat', expect.anything());
+    vi.unstubAllEnvs();
+  });
 });
