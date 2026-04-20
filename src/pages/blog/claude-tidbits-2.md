@@ -8,19 +8,15 @@ banner: /claude-tidbits-logo.svg
 
 ## Intro
 
-In the first [Claude Code Tidbits](/blog/claude-tidbits-1), I looked at skills. What's interesting about them is not just that they are useful, but that they were built around an [open spec](https://agentskills.io/specification): a small, file-based format that other agents can plausibly adopt.
+In the first [Claude Code Tidbits](/blog/claude-tidbits-1), I looked at skills. What's interesting about them is not just that they are useful, but that they became an [open spec](https://agentskills.io/specification): a small, file-based format that other agents can plausibly adopt.
 
-Plugins are Anthropic's opinionated package format that can contain skills, and in simple cases they may look like a [folder of skills with extra metadata](https://code.claude.com/docs/en/plugins-reference). But the important distinction is that a plugin usually contains a bundle of assumptions about the host environment.
+[Plugins](https://claude.com/plugins) are Anthropic's opinionated package format that can contain skills, and in simple cases they may look like a [folder of skills with extra metadata](https://code.claude.com/docs/en/plugins-reference). But the important distinction is that a plugin usually contains a bundle of assumptions about the host environment.
 
-I'll give an example of how a skill workflow can work cleanly in **Claude Code** but behave differently in **Codex**. And that's not because the model could not read or interpret the Markdown, but because the surrounding **harness** was different. The model sis at the core of agentic AI. But when comparing models from the same generation - say Opus 4.6 and  GPT-5.3-Codex - the [runtime around the model]() can matter much more than the model itself. It's what decides how instructions are discovered, invoked, permissioned, delegated, and connected to tools. As models become more capable, their nuances fate away in importance when compared to these product-layer differences.
-
-Anthropic documents Claude Code plugins as a their specific packaging layer for skills, commands, agents, hooks, MCP and LSP servers, monitors, executable tools, and settings. There is no official open, cross-agent plugin specification analogous to the Agent Skills spec. The open standards show up, though, as the pieces a plugin can contain, like [Agent Skills](https://code.claude.com/docs/en/skills) and [MCP](https://code.claude.com/docs/en/mcp), rather than the plugin container itself.
+In this post I'll give an example of how a plugin workflow can work cleanly in **Claude Code** but behave differently in **Codex**, not because the model could not read or interpret the Markdown, but because the surrounding **harness** was different.
 
 ## What a Plugin Adds
 
-A standalone skill gives Claude a reusable instruction file. A plugin gives Claude Code a namespaced bundle.
-
-That bundle entry point is a `.claude-plugin/plugin.json` file and can include several kinds of components:
+A plugin gives Claude Code a namespaced bundle. That bundle entry point is a `.claude-plugin/plugin.json` file and can include several kinds of components:
 
 - `skills/` for reusable Markdown-based workflows
 - `commands/` for slash commands
@@ -30,13 +26,17 @@ That bundle entry point is a `.claude-plugin/plugin.json` file and can include s
 - `.lsp.json` for language servers
 - `monitors/`, `bin/`, `settings.json`, and output styles for deeper integration
 
+The LLM model is at the core of agentic AI. But when comparing models from the same generation - say Opus 4.6 and  GPT-5.3-Codex - the [runtime around the model]() sometimes matters more than the model itself. It's what decides how instructions are discovered, invoked, permissioned, delegated, and connected to tools.
+
+Anthropic documents [Claude Code plugins](https://claude.com/plugins) as their specific packaging layer for skills, commands, agents, hooks, MCP and LSP servers, monitors, executable tools, and settings. There is no official open, cross-agent plugin specification analogous to the [Agent Skills spec](https://agentskills.io/specification). The open standards show up, though, as the pieces a plugin can contain, like [Agent Skills](https://code.claude.com/docs/en/skills) and [MCP](https://code.claude.com/docs/en/mcp), rather than the plugin container itself.
+
 ## Example
 
 ### /context-engineering-kit
 
-Folks at [NeoLab](https://neolab.finance/) have created a [marketplace](https://cek.neolab.finance/) with several plugins. A particular interesting one is the [TDD](https://cek.neolab.finance/plugins/tdd). How awesome would it be to have an agent infused with the decades of engineering practice drenched into the classics [Test Driven Development: By Example](https://www.oreilly.com/library/view/test-driven-development/0321146530/) and [Refactoring: Improving the Design of Existing Code](https://martinfowler.com/books/refactoring.html)? Well, this is what the [this plugin claims](https://cek.neolab.finance/plugins/tdd#foundational-works) to do. Let's install and check it out (it's free)!
+Folks at [NeoLab](https://neolab.finance/) have created a [marketplace](https://cek.neolab.finance/) with several plugins. Let's take a look at their [TDD plugin](https://cek.neolab.finance/plugins/tdd). How awesome would it be to have an agent infused with the decades of engineering practice drenched into the classics [Test Driven Development: By Example](https://www.oreilly.com/library/view/test-driven-development/0321146530/) and [Refactoring: Improving the Design of Existing Code](https://martinfowler.com/books/refactoring.html)? Well, this is what the [this plugin claims](https://cek.neolab.finance/plugins/tdd#foundational-works) to do. Let's install and check it out (it's free)!
 
-First, Claude Code needs to know about a marketplace:
+First, Claude Code needs to know about the marketplace:
 
 ```bash
 /plugin marketplace add NeoLabHQ/context-engineering-kit
@@ -50,7 +50,13 @@ Then you install one plugin from that catalog:
 /plugin install tdd@NeoLabHQ/context-engineering-kit
 ```
 
-That resolves to the `tdd` entry in the marketplace, it does not install every plugin in the repository, only the one named `tdd`.
+Throughout the CLI propts you choose how to install, e.g. if local to project or globally available. I chose the former and this popped up in my `.claude/settings.local.json`:
+
+```
+  "enabledPlugins": {
+    "tdd@context-engineering-kit": true
+  }
+```
 
 For the TDD plugin, the source directory currently looks roughly like this:
 
