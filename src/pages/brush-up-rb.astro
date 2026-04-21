@@ -32,11 +32,17 @@ import ProjectModal from '../components/ProjectModal.svelte';
       <strong>Brush Up Ruby</strong> is a Socratic tutor that teaches Ruby through my own
       Zettelkasten graph — a network of interlinked notes I've built while learning the language.
     </p>
-    <p>
+    <p class="modal-desktop-only">
       The graph above is a live snapshot of the vault: each node is an atomic note
       on a single concept, and each edge is a link I drew between ideas. At query
       time, a <code>tf-idf</code> retriever pulls the most relevant notes and feeds
       them to Claude as grounding context, so the tutor stays tethered to the way
+      <em>I</em> internalized the language.
+    </p>
+    <p class="modal-mobile-only">
+      Each answer is grounded in atomic notes from that vault. At query time, a
+      <code>tf-idf</code> retriever pulls the most relevant notes and feeds them to
+      Claude as context, so the tutor stays tethered to the way
       <em>I</em> internalized the language.
     </p>
   </ProjectModal>

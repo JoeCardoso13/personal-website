@@ -10,6 +10,8 @@
   export let ctaLabel = 'try now →';
 
   let open = false;
+  let showVideo = true;
+  const compactModalQuery = '(max-width: 640px), (max-width: 900px) and (max-height: 520px)';
 
   function close(): void {
     open = false;
@@ -27,7 +29,14 @@
     }
   }
 
+  function syncVideoVisibility(query: MediaQueryList | MediaQueryListEvent): void {
+    showVideo = !query.matches;
+  }
+
   onMount(() => {
+    const mediaQuery = window.matchMedia(compactModalQuery);
+    syncVideoVisibility(mediaQuery);
+
     try {
       if (getHistory(tutor).length === 0) {
         open = true;
@@ -37,7 +46,12 @@
     }
 
     window.addEventListener('keydown', handleKeydown);
-    return () => window.removeEventListener('keydown', handleKeydown);
+    mediaQuery.addEventListener('change', syncVideoVisibility);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeydown);
+      mediaQuery.removeEventListener('change', syncVideoVisibility);
+    };
   });
 </script>
 
@@ -60,18 +74,20 @@
       </header>
 
       <div class="modal-body">
-        <figure class="media-wrap">
-          <video
-            class="media"
-            src={videoSrc}
-            autoplay
-            loop
-            muted
-            playsinline
-            preload="auto"
-            aria-label={videoLabel}
-          ></video>
-        </figure>
+        {#if showVideo}
+          <figure class="media-wrap">
+            <video
+              class="media"
+              src={videoSrc}
+              autoplay
+              loop
+              muted
+              playsinline
+              preload="auto"
+              aria-label={videoLabel}
+            ></video>
+          </figure>
+        {/if}
 
         <div class="description">
           <slot>
@@ -205,6 +221,10 @@
     margin-bottom: 0;
   }
 
+  .description :global(.modal-mobile-only) {
+    display: none;
+  }
+
   .description :global(code) {
     background: #1a1a1a;
     color: var(--accent, #00ff9f);
@@ -295,6 +315,26 @@
     .cta {
       width: 100%;
       padding: 0.7rem 1rem;
+    }
+  }
+
+  @media (max-width: 640px), (max-width: 900px) and (max-height: 520px) {
+    .backdrop {
+      align-items: center;
+      padding: 0.65rem;
+    }
+    .modal {
+      max-width: 26rem;
+      max-height: calc(100dvh - 1.3rem);
+    }
+    .modal-body {
+      gap: 0.75rem;
+    }
+    .description :global(.modal-desktop-only) {
+      display: none;
+    }
+    .description :global(.modal-mobile-only) {
+      display: block;
     }
   }
 </style>
