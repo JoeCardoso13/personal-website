@@ -44,7 +44,7 @@ A marketplace is a catalog. In this case, the catalog is the [Context Engineerin
 
 Your global Claude settings know about the marketplace itself here:
 
-```
+```json
   "extraKnownMarketplaces": {
     "context-engineering-kit": {
       "source": {
@@ -63,7 +63,7 @@ Then you install one plugin from that catalog:
 
 Throughout the CLI prompts you choose how to install, e.g. if local to project or globally available. I chose the former and this popped up in my `./.claude/settings.local.json`:
 
-```
+```json
   "enabledPlugins": {
     "tdd@context-engineering-kit": true
   }
