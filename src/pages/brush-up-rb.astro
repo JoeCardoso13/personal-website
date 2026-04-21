@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Chat from '../components/Chat.svelte';
+import ProjectModal from '../components/ProjectModal.svelte';
 ---
 
 <Layout title="brush-up-rb - Ruby Tutor" description="A Ruby tutor powered by AI">
@@ -19,6 +20,26 @@ import Chat from '../components/Chat.svelte';
     </div>
     <Chat tutor="ruby" client:load />
   </section>
+
+  <ProjectModal
+    tutor="ruby"
+    videoSrc="/ruby.mp4"
+    videoLabel="Obsidian vault graph for the Ruby Zettelkasten notes"
+    title="$ cat brush-up-rb/README.md"
+    client:load
+  >
+    <p>
+      <strong>Brush Up Ruby</strong> is a Socratic tutor that teaches Ruby through my own
+      Zettelkasten graph — a network of interlinked notes I've built while learning the language.
+    </p>
+    <p>
+      The graph above is a live snapshot of the vault: each node is an atomic note
+      on a single concept, and each edge is a link I drew between ideas. At query
+      time, a <code>tf-idf</code> retriever pulls the most relevant notes and feeds
+      them to Claude as grounding context, so the tutor stays tethered to the way
+      <em>I</em> internalized the language.
+    </p>
+  </ProjectModal>
 </Layout>
 
 <script>

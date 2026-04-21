@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Chat from '../components/Chat.svelte';
+import ProjectModal from '../components/ProjectModal.svelte';
 ---
 
 <Layout title="brush-up-py - Python Tutor" description="A Python tutor powered by AI">
@@ -19,6 +20,26 @@ import Chat from '../components/Chat.svelte';
     </div>
     <Chat tutor="python" client:load />
   </section>
+
+  <ProjectModal
+    tutor="python"
+    videoSrc="/python.mp4"
+    videoLabel="Obsidian vault graph for the Python Zettelkasten notes"
+    title="$ cat brush-up-py/README.md"
+    client:load
+  >
+    <p>
+      <strong>Brush Up Python</strong> is a Socratic tutor that teaches Python through my own
+      Zettelkasten graph — a network of interlinked notes I've built over years of study.
+    </p>
+    <p>
+      The graph above is a live snapshot of the vault: each node is an atomic note
+      on a single concept, and each edge is a link I drew between ideas. At query
+      time, a <code>tf-idf</code> retriever pulls the most relevant notes and feeds
+      them to Claude as grounding context, so the tutor's answers stay tethered to
+      the way <em>I</em> internalized the language.
+    </p>
+  </ProjectModal>
 </Layout>
 
 <script>
