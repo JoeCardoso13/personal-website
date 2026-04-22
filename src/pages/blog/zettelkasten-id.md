@@ -28,5 +28,3 @@ The budget defaults were also corrected. The original values — 2 million input
 What I find most interesting about this round is not the code. The code is small. What is interesting is the step where the framing had to change. The guidance document diagnosed the right symptom — inconsistency between two identity schemes — but the natural next move was to design a better identity system. That would have produced a more sophisticated answer to a question the product was not actually asking. The better move was to stop and ask what the product actually needed, and then be willing to delete things that were answering the wrong question.
 
 That is a different engineering judgment than making something more robust. It is the judgment to make something more honest, even when honesty means less code.
-
-

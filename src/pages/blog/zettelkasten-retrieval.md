@@ -27,7 +27,7 @@ Let's not forget the markdown notes grounding this retrieval are far from neat. 
 
 I added a second layer of tests that go through the HTTP stack using FastAPI's `TestClient` with the real 127-note corpus. The Anthropic client is mocked — these tests are about retrieval grounding, not about what Claude says — but everything else is real. The key assertion in these tests is does the `system` argument that gets passed to the Claude API call actually contain relevant content from the notes?
 
-These e2e tests caught something the integration tests missed. One integration test checked whether `Inheritance` appeared in the top 3 retrieval results for "how does inheritance work" — and it did, in third place, so the test passed. But the prompt building code was taking only the top result. Third place never reached the system prompt. So the same query was passing the integration test but failing the e2e test. 
+These e2e tests caught something the integration tests missed. One integration test checked whether `Inheritance` appeared in the top 3 retrieval results for "how does inheritance work" — and it did, in third place, so the test passed. But the prompt building code was taking only the top result. Third place never reached the system prompt. So the same query was passing the integration test but failing the e2e test.
 
 ### Adding Observability
 
