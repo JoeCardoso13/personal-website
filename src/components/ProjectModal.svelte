@@ -198,13 +198,15 @@
     background: #050505;
     display: flex;
     justify-content: center;
+    height: min(62dvh, 420px);
   }
 
   .media {
     display: block;
     width: 100%;
-    max-height: 62dvh;
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
   }
 
   .description {
