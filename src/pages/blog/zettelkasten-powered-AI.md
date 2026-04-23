@@ -83,13 +83,3 @@ That is a different engineering judgment than making something more robust. It i
 
 
 Also, a next step I'm positive I'll do, is adding support for Ruby and JavaScript, since the Zettelkasten notes for them were already taken. This is a single-tutor architecture. That was the fastest way to ship, but it means the backend currently assumes one notes corpus, one prompt, and one tutoring flow. Expanding it into Python, JavaScript, and Ruby without multiplying Fly.io costs will require turning it into one shared tutor engine serving multiple corpora inside the same deployed app.
-
----
-
-(1) The replacement is a small TF-IDF index — term frequency-inverse document frequency. At a high level, TF-IDF turns each note into a weighted word vector. First, it builds a shared vocabulary from the full note corpus. Then, for each note, it measures how often each vocabulary term appears in that note. That is the term-frequency part. It also computes how distinctive each term is across the corpus by checking how many notes contain it. That is the inverse-document-frequency part. Common words are not manually removed; they just matter less because they appear everywhere.
-
-Multiplying those two signals produces one TF-IDF vector per note. A user query is treated like a tiny document and mapped into the same vector space, using the same vocabulary and IDF weights. The query vector is then compared against every note vector with cosine similarity, and the highest-scoring note becomes the retrieval starting point.
-
-The graph still exists. TF-IDF replaced the brittle title-matching step, but once it selects a note, the app still uses the note graph to gather linked neighbors and inject that surrounding context into the system prompt. On the implementation side, wikilink brackets were stripped so linked terms remained searchable, and the title was repeated three times in the indexed text to create a bounded title boost.
-
-This was intentionally lighter than semantic retrieval with embeddings or a vector database. A system this size does not need that extra infrastructure, and keeping retrieval dependency-free made it easier to test, understand, and deploy cheaply on Fly.io.
