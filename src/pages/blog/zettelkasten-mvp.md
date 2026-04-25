@@ -25,7 +25,7 @@ Design the API surface, write tests against it, implement, deploy. The backend i
 
 The frontend work was augmenting the existing Astro site. Astro doesn't ship interactive components out of the box, so I added a Svelte island for the tutor UI — a small, self-contained page that handles user input and streams responses from the backend.
 
-## Conclusion
+## Next Steps
 
 After 2 days it was live — the UI held up, the tutor answered questions, it looked like a working product. Looking under the hood, two components were quietly broken, and one natural expansion was already within reach.
 
