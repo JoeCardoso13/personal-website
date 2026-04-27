@@ -13,7 +13,7 @@ By 2026, that old note-taking habit started to look like infrastructure. Those v
 
 ## Building It
 
-So I built the Python tutor with agents, using [joedevflow](https://github.com/JoeCardoso13/devflow) as the guardrail: design, test, implement, observe, repeat. Simply put, a user asks a question, the backend looks through my Obsidian vault, and the model answers using whatever notes it finds. If the app could not find the right notes, it was not a Zettelkasten tutor.
+So I built the Python tutor with agents, using [joedevflow](https://github.com/JoeCardoso13/joedevflow) as the guardrail: design, test, implement, observe, repeat. Simply put, a user asks a question, the backend looks through my Obsidian vault, and the model answers using whatever notes it finds. If the app could not find the right notes, it was not a Zettelkasten tutor.
 
 I treated the vault like what it already was: a graph. Obsidian notes link to each other with `[[wikilinks]]`, so each note became a node and each link became an edge. The app parses them into a NetworkX directed graph, tries to match a user question to a note via `difflib` fuzzy matching on note titles, then gathers nearby linked notes through a 1-hop traversal of that same graph.
 
@@ -21,7 +21,7 @@ When a match is found, the retrieval layer collects both the note's outgoing lin
 
 ## Shipping It
 
-Design the API surface, write tests against it, implement, deploy. The backend is a FastAPI service containerized with Docker — notes baked right into the image, so the vault travels with the code. It runs on Fly.io on a shared-CPU, 512 MB machine that auto-stops when idle and wakes on the first request. No traffic, nearly no cost. Redeploying was a single `fly deploy` — fast enough that iterating felt cheap.
+Design the API surface, write tests against it, implement, deploy. The backend is a FastAPI service containerized with Docker — notes baked right into the image, so the vault travels with the code. It runs on [fly.io](https://fly.io/) on a shared-CPU, 512 MB machine that auto-stops when idle and wakes on the first request. No traffic, nearly no cost. Redeploying was a single `fly deploy` — fast enough that iterating felt cheap.
 
 The frontend work was augmenting the existing Astro site. Astro doesn't ship interactive components out of the box, so I added a Svelte island for the tutor UI — a small, self-contained page that handles user input and streams responses from the backend.
 
@@ -30,5 +30,5 @@ The frontend work was augmenting the existing Astro site. Astro doesn't ship int
 After 2 days it was live — the UI held up, the tutor answered questions, it looked like a working product. Looking under the hood, two components were quietly broken, and one natural expansion was already within reach.
 
 - **Retrieval was brittle.** It only worked when the user's phrasing happened to fuzzy-match a note title. When it missed, the graph had nothing to traverse and the model answered from its own training data. [→]()
-- **User identity was a contradiction.** SQLite tracking browser-session UUIDs, rate limiting keyed by IP, token budgets sized larger than the entire prepaid API balance. The agent had built real infrastructure to solve problems this product didn't have. [→]()
-- **One tutor was an artificial constraint.** I already had vaults for Ruby and JavaScript — same structure, same format. One shared engine, three corpora, zero new retrieval logic. Most of the work was already done.
+- **User identity system was inadequate for the use case.** SQLite tracking browser-session UUIDs, rate limiting keyed by IP... The agent had built sloppy solutions to solve problems this product didn't have. [→]()
+- **One tutor was an artificial constraint.** I already had vaults for Ruby and JavaScript — same structure, same format. One shared engine, three corpora, zero new retrieval logic. Most of the work was already done. [→]()
