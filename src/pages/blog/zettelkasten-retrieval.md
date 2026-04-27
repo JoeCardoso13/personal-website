@@ -7,7 +7,7 @@ description: "The Python tutor was live but the retrieval was broken. Here's how
 
 ## Intro
 
-The [previous post]() shipped the Python tutor MVP: a FastAPI service that grounds Claude in my Obsidian notes by fuzzy-matching user questions against note titles. However, observability analysis showed the match failing often — when it did, the graph had nothing to expand from, and the model answered from its own training data instead of my vault. This post covers what changed and why.
+The [previous post]() shipped the Python tutor MVP: a FastAPI service that grounds Claude in my Obsidian notes by fuzzy-matching user questions against note titles. However, observability analysis showed the match failing often — when it did, the graph had nothing to expand from, and the model answered from its own training data instead of my vault. The retrieval needed a rewrite.
 
 ## From Fuzzy Matching to TF-IDF
 
@@ -35,15 +35,15 @@ Here is how both systems performed across four real queries against the 127-note
 
 The second row is worth pausing on: `difflib` ranked `Arithmetic operation` above `Decorator` for a query that contains the word "decorator". Character-level matching is semantically blind. Every difflib score in the table falls below its 0.6 cutoff — so the result column is all no matches. The third row is where TF-IDF also fails — but notice the score: 0.09, below TF-IDF's 0.10 confidence floor.
 
-Semantic retrieval with embeddings is a valid choice for this. Chunking, embedding, and persisting vectors would have added too much infrastructure cost and complexity to a service running on a small [fly.io](https://fly.io/) machine. TF-IDF runs in memory, rebuilds instantly on startup, and adds no external dependencies. For now that's enough, but revamping the retrieval to use embeddings is something I'd definitely like to try.
+Semantic retrieval with embeddings would work well here. Chunking, embedding, and persisting vectors would have added too much infrastructure cost and complexity to a service running on a small [fly.io](https://fly.io/) machine. TF-IDF runs in memory, rebuilds instantly on startup, and adds no external dependencies. For now that's enough, but revamping the retrieval to use embeddings is something I'd definitely like to try.
 
 ## Testing & Debugging
 
 ### Writing Tests That Can Fail
 
-That `Self` ✗ in the table above — score 0.09, below the 0.10 confidence floor — points to a piece of engineering worth mentioning. The classification of a failure itself can be an engineering decision. Here: "is this a bug or not?" is one example. A failure can be a regression — something broke — or it can be a known limitation of the current design. The `Self` result isn't wrong because the code is broken; it's wrong because TF-IDF on a thin corpus has gaps, and this is one of them. Naming that distinction, and documenting it in the test suite rather than deleting the test or silently lowering the threshold, is the proper engineering call.
+That `Self` ✗ in the table above — score 0.09, below the 0.10 confidence floor — points to a piece of engineering worth mentioning. The classification of a failure itself can be an engineering decision — "is this a bug or not?" is one example. A failure can be a regression — something broke — or it can be a known limitation of the current design. The `Self` result isn't wrong because the code is broken; it's wrong because TF-IDF on a thin corpus has gaps. Naming that distinction, and documenting it in the test suite rather than deleting the test or silently lowering the threshold, is the proper engineering call.
 
-`pytest.mark.xfail` does exactly this. If retrieval ever improves enough to handle the case, it unexpectedly passes and pytest flags it. Until then, it counts as documented, expected behavior — not a failure of the suite, but a fact about the system.
+`pytest.mark.xfail` does exactly this. If retrieval ever improves enough to handle the case, pytest will flag it as an unexpected pass. Until then, it counts as documented, expected behavior — not a failure of the suite, but a fact about the system.
 
 ```python
 @pytest.mark.xfail(
@@ -60,9 +60,9 @@ def test_inheritance_direct(self, real_index):
 
 ### What the Logs Caught
 
-As per the directives in my [joedevflow](https://github.com/JoeCardoso13/joedevflow) skill, after the system is built and properly tested a maintenance phase follows. It's characterized by cycles of observability and debugging. Here the integration test for `Inheritance` had been passing. It shouldn't have.
+As per the directives in my [joedevflow](https://github.com/JoeCardoso13/joedevflow) skill, after the system is built and properly tested, a maintenance phase follows. It's characterized by cycles of logging, finding, and fixing. Here the integration test for `Inheritance` had been passing. It shouldn't have.
 
-The agent committed the classic slop: writing lenient tests. The testing code called `index.search(query, k=3)`, asserting `Inheritance` appeared somewhere in the top three results. It did — at rank 3. But in the implementation code `ask()` calls `index.search(question, k=1)`. One result. Top of the list. Integration tests never touched prompt building, so the test never saw the gap. The e2e test did. By sending a real HTTP request through the whole stack and asserting on the actual `system` argument passed to the mocked Claude client, it added the necessary layer of visibility. Here's what some logs wrapping the Claude API calls showed:
+The AI agent had committed the classic slop: writing lenient tests. The testing code called `index.search(query, k=3)`, asserting `Inheritance` appeared somewhere in the top three results. It did — at rank 3. But in the implementation code `ask()` calls `index.search(question, k=1)`. One result. Top of the list. Integration tests never touched prompt building, so the test never saw the gap. The e2e test did. By sending a real HTTP request through the whole stack and asserting on the actual `system` argument passed to the mocked Claude client, it added the necessary layer of visibility. Here's what the logs around the Claude API calls showed:
 
 ```
 2026-04-14T12:37:02Z app[148e03d7f09018] ewr [info] retrieval topic='Implicit coercion' score=0.091 neighbors=6 question='how does inheritance work?'
