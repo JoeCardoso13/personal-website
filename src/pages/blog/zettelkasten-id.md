@@ -2,7 +2,7 @@
 layout: ../../layouts/BlogPost.astro
 title: "Zettelkasten powered AI tutor: defining user session"
 date: "April 19, 2026"
-description: "How AI agentic engineering works: build and ship fast, then iterate."
+description: "On going back to audit what you shipped: finding AI slop in the identity layer, and replacing 90 lines of SQLite with a 30-line dict."
 ---
 
 ## Intro
