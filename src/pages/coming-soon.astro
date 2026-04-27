@@ -4,13 +4,18 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="Coming Soon - Joe Cardoso">
   <div class="container">
-    <img src="/under-construction.svg" alt="Under construction" />
+    <img src="/under-construction.svg" alt="Under construction" class="construction-img" />
     <p>This post isn't live yet. Check back soon.</p>
     <a href="#" onclick="history.back(); return false;" class="back-link">← go back</a>
   </div>
 </Layout>
 
 <style>
+  .construction-img {
+    max-width: 100%;
+    height: auto;
+  }
+
   .container {
     display: flex;
     flex-direction: column;
