@@ -52,6 +52,7 @@ if (pages.length > 1 && pages[pages.length - 1].length < PAGE_SIZE) {
 
 const allPosts = import.meta.glob('./blog/*.md', { eager: true });
 const recentPosts = Object.entries(allPosts)
+  .filter(([path]) => !path.split('/').pop()?.startsWith('_'))
   .map(([path, post]: [string, any]) => ({
     title: post.frontmatter.title,
     slug: path.split('/').pop()?.replace('.md', ''),

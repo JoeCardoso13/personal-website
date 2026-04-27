@@ -6,6 +6,7 @@ export const getStaticPaths = (async ({ paginate }) => {
   const allPosts = import.meta.glob('./*.md', { eager: true });
 
   const posts = Object.entries(allPosts)
+    .filter(([path]) => !path.split('/').pop()?.startsWith('_'))
     .map(([path, post]: [string, any]) => ({
       title: post.frontmatter.title,
       slug: path.split('/').pop()?.replace('.md', ''),

@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/BlogPost.astro
 title: "Zettelkasten powered AI tutor: shipping an MVP"
-date: "April 13, 2026"
+date: "April 28, 2026"
 description: "How AI agentic engineering works: build and ship fast, then iterate."
 ---
 
@@ -29,6 +29,6 @@ The frontend work was augmenting the existing Astro site. Astro doesn't ship int
 
 After 2 days it was live — the UI held up, the tutor answered questions, it looked like a working product. Looking under the hood, two components were quietly broken, and one natural expansion was already within reach.
 
-- **Retrieval was brittle.** It only worked when the user's phrasing happened to fuzzy-match a note title. When it missed, the graph had nothing to traverse and the model answered from its own training data. [→]()
-- **User identity system was inadequate for the use case.** SQLite tracking browser-session UUIDs, rate limiting keyed by IP... The agent had built sloppy solutions to solve problems this product didn't have. [→]()
-- **One tutor was an artificial constraint.** I already had vaults for Ruby and JavaScript — same structure, same format. One shared engine, three corpora, zero new retrieval logic. Most of the work was already done. [→]()
+- **Retrieval was brittle.** It only worked when the user's phrasing happened to fuzzy-match a note title. When it missed, the graph had nothing to traverse and the model answered from its own training data. [→](/coming-soon)
+- **User identity system was inadequate for the use case.** SQLite tracking browser-session UUIDs, rate limiting keyed by IP... The agent had built sloppy solutions to solve problems this product didn't have. [→](/coming-soon)
+- **One tutor was an artificial constraint.** I already had vaults for Ruby and JavaScript — same structure, same format. One shared engine, three corpora, zero new retrieval logic. Most of the work was already done. [→](/coming-soon)
