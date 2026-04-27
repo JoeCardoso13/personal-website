@@ -108,6 +108,29 @@ const { frontmatter } = Astro.props;
     color: var(--text-dim);
   }
 
+  .post-content :global(.appendix) {
+    font-size: 0.9em;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    font-style: italic;
+  }
+
+  .post-content :global(a.fn-num),
+  .post-content :global(span.fn-num) {
+    color: var(--accent);
+    font-weight: 500;
+    font-style: normal;
+    text-decoration: none;
+    scroll-margin-top: 2rem;
+  }
+
+  .post-content :global(a.fn-num:hover) {
+    text-decoration: underline;
+  }
+
   .post-footer {
     margin-top: 4rem;
     padding-top: 2rem;
