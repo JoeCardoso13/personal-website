@@ -5,17 +5,19 @@ date: "April 28, 2026"
 description: "How AI agentic engineering works: build and ship fast, then iterate."
 ---
 
+> Finished version: [Brush Up Python](/brush-up-py)
+
 ## Intro
 
-Sometime around 2023, at a study session led by [JD Fortune](https://www.linkedin.com/in/jondfortune/), I learned about the Zettelkasten note-taking method. This system of atomic notes, linked to each other, was a living brain-map, always being rewritten. Using Obsidian and building up vaults — folders full of Markdown files — had the side effect of turning those links into a visual graph.
+Sometime around 2023, at a study session led by [JD Fortune](https://www.linkedin.com/in/jondfortune/), I learned about the Zettelkasten note-taking method, and started using it. This system of atomic notes, linked to each other, was a living brain-map, always being rewritten. Using [Obsidian](https://obsidian.md/) and building up vaults — folders full of Markdown files — had the side effect of turning those links into a visual graph.
 
 By 2026, that old note-taking habit started to look like infrastructure. Those vaults were all filled with Markdown files, and AI agents love that format. The structure I'd been building for myself as a learning tool was quietly also a knowledge base. It was screaming for an AI on top of it.
 
 ## Building It
 
-So I built the Python tutor with agents, using [joedevflow](https://github.com/JoeCardoso13/joedevflow) as the guardrail: design, test, implement, observe, repeat. Simply put, a user asks a question, the backend looks through my Obsidian vault, and the model answers using whatever notes it finds. If the app could not find the right notes, it was not a Zettelkasten tutor.
+So I built the Python tutor with agents, using [joedevflow](https://github.com/JoeCardoso13/joedevflow) as the guardrail: design, test, implement, observe, repeat. Simply put, a user asks a question, the backend looks through my [Obsidian](https://obsidian.md/) vault, and the model answers using whatever notes it finds. If the app could not find the right notes, it was not a Zettelkasten tutor.
 
-I treated the vault like what it already was: a graph. Obsidian notes link to each other with `[[wikilinks]]`, so each note became a node and each link became an edge. The app parses them into a NetworkX directed graph, tries to match a user question to a note via `difflib` fuzzy matching on note titles, then gathers nearby linked notes through a 1-hop traversal of that same graph.
+I treated the vault like what it already was: a graph. [Obsidian](https://obsidian.md/) notes link to each other with `[[wikilinks]]`, so each note became a node and each link became an edge. The app parses them into a NetworkX directed graph, tries to match a user question to a note via `difflib` fuzzy matching on note titles, then gathers nearby linked notes through a 1-hop traversal of that same graph.
 
 When a match is found, the retrieval layer collects both the note's outgoing links and any notes that point back to it. That 1-hop neighborhood is assembled into a context block and injected into the system prompt, giving the model a small but topically relevant slice of the vault. No embeddings, no vector database, just graph traversal.
 
