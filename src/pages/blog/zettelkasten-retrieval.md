@@ -1,13 +1,15 @@
 ---
 layout: ../../layouts/BlogPost.astro
 title: "Zettelkasten powered AI tutor: improving retrieval"
-date: "April 15, 2026"
+date: "May 5, 2026"
 description: "The Python tutor was live but the retrieval was broken. Here's how I fixed it and the tests that made the fix trustworthy."
 ---
 
+> Finished version: [Brush Up Python](/brush-up-py)
+
 ## Intro
 
-The [previous post]() shipped the Python tutor MVP: a FastAPI service that grounds Claude in my Obsidian notes by fuzzy-matching user questions against note titles. However, observability analysis showed the match failing often — when it did, the graph had nothing to expand from, and the model answered from its own training data instead of my vault. The retrieval needed a rewrite.
+The [previous post](/blog/zettelkasten-mvp) shipped the Python tutor MVP: a FastAPI service that grounds Claude in my Obsidian notes by fuzzy-matching user questions against note titles. However, observability analysis showed the match failing often — when it did, the graph had nothing to expand from, and the model answered from its own training data instead of my vault. The retrieval needed a rewrite.
 
 ## From Fuzzy Matching to TF-IDF
 
