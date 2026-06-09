@@ -1,13 +1,13 @@
 ---
 layout: ../../layouts/BlogPost.astro
 title: "Zettelkasten powered AI tutor: defining user session"
-date: "May 12, 2026"
+date: "June 9, 2026"
 description: "On going back to audit what you shipped: finding AI slop in the identity layer, and replacing 90 lines of SQLite with a 30-line dict."
 ---
 
 ## Intro
 
-In the [Zettelkasten powered AI tutor: shipping an MVP]() post, I built the first version of a Zettelkasten-powered Python tutor — a tool that reads my own notes and uses them to coach me through topics. The MVP shipped fast, but speed left something behind: the agent had filled in design decisions I'd left deliberately open — the price of moving fast. This post is about finding that, understanding why it happened, and correcting it.
+In the [Zettelkasten powered AI tutor: shipping an MVP](/blog/zettelkasten-mvp) post, I built the first version of a Zettelkasten-powered Python tutor — a tool that reads my own notes and uses them to coach me through topics. The MVP shipped fast, but speed left something behind: the agent had filled in design decisions I'd left deliberately open — the price of moving fast. This post is about finding that, understanding why it happened, and correcting it.
 
 ## The Slop(s)
 
